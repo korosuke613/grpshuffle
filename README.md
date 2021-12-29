@@ -40,6 +40,18 @@ result:
 ]
 ```
 
+## Install
+
+### Server
+```
+go install github.com/korosuke613/grpshuffle/go/grpshuffle-server@latest
+```
+
+### Client
+```
+go install github.com/korosuke613/grpshuffle/go/grpshuffle-client@latest
+```
+
 ## Usage
 
 ### client
