@@ -14,14 +14,14 @@ permissions:
   statuses: none
 
 jobs:
-  fmt:
+  go-fmt:
     name: Check go format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.16'
+          go-version: '1.17'
       - uses: actions/cache@v2
         with:
           path: |
@@ -32,7 +32,7 @@ jobs:
             ${{ runner.os }}-go-
       - run: diff -u <(echo -n) <(go fmt ./...)
 
-  golangci:
+  go-lint:
     name: Lint go
     runs-on: ubuntu-latest
     steps:
@@ -42,14 +42,14 @@ jobs:
         with:
           version: v1.29
 
-  test:
+  go-test:
     name: Test go
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.16'
+          go-version: '1.17'
       - uses: actions/cache@v2
         with:
           path: |
@@ -60,3 +60,10 @@ jobs:
             ${{ runner.os }}-go-
       - run: make PLATFORM=linux
       - run: go test ./... -v
+
+  action-lint:
+    name: Lint GitHub Actions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: reviewdog/action-actionlint@v1
