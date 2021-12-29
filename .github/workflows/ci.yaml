@@ -58,7 +58,6 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - run: make PLATFORM=linux
       - run: go test ./... -v
 
   action-lint:
@@ -67,3 +66,38 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: reviewdog/action-actionlint@v1
+
+  e2e-test:
+    name: End-to-End testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.17'
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install Dockerize
+        env:
+          DOCKERIZE_VERSION: v0.6.1
+        run: |
+          wget "https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz"
+          sudo tar -C /usr/local/bin -xzvf "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz"
+          rm "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz"
+
+      - run: make PLATFORM=linux
+
+      - name: Launch server
+        run: |
+          ./server &
+          dockerize -wait tcp://localhost:13333          
+
+      - run: ./client localhost:13333 2 chikin-nanban karamen mango jidori
