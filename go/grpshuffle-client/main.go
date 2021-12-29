@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"google.golang.org/grpc/credentials/insecure"
 	"os"
 	"strconv"
 	"time"
@@ -33,9 +34,9 @@ func subMain() error {
 		Time: 60 * time.Second,
 	}
 
-	// grpc.WithInsecure() を指定することで、TLS ではなく平文で接続
+	// insecure.NewCredentials() を指定することで、TLS ではなく平文で接続
 	// 通信内容が保護できないし、不正なサーバーに接続しても検出できないので本当はダメ
-	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithKeepaliveParams(kp))
+	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithKeepaliveParams(kp))
 	if err != nil {
 		return err
 	}
