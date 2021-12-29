@@ -51,3 +51,9 @@ usage: client HOST:PORT PARTITION TARGET_1 TARGET_2 ... TARGET_N
 ```
 make
 ```
+
+## Release
+
+1. Create git tag (`git tag v0.0.x`)
+2. Push git tag (`git push origin v0.0.x`)
+3. Auto publish by GitHub Actions (https://github.com/korosuke613/grpshuffle/actions/workflows/release.yaml)
