@@ -29,7 +29,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| targets | [string](#string) | repeated |  |
+| targets | [string](#string) | repeated | Target to be shuffled. |
 
 
 
@@ -44,9 +44,9 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| targets | [string](#string) | repeated |  |
-| partition | [sint32](#sint32) |  |  |
-| sequential | [bool](#bool) |  |  |
+| targets | [string](#string) | repeated | Target to be shuffled. |
+| partition | [sint32](#sint32) |  | The number of groups to divide into. |
+| sequential | [bool](#bool) |  | If true, do not shuffle. |
 
 
 
@@ -61,7 +61,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| combinations | [Combination](#grpshuffle.Combination) | repeated |  |
+| combinations | [Combination](#grpshuffle.Combination) | repeated | Set of targets. |
 
 
 
@@ -81,7 +81,7 @@
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| Shuffle | [ShuffleRequest](#grpshuffle.ShuffleRequest) | [ShuffleResponse](#grpshuffle.ShuffleResponse) |  |
+| Shuffle | [ShuffleRequest](#grpshuffle.ShuffleRequest) | [ShuffleResponse](#grpshuffle.ShuffleResponse) | Shuffle. |
 
  
 
