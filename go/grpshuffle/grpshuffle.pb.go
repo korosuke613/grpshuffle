@@ -25,7 +25,7 @@ type Combination struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Targets []string `protobuf:"bytes,1,rep,name=targets,proto3" json:"targets,omitempty"`
+	Targets []string `protobuf:"bytes,1,rep,name=targets,proto3" json:"targets,omitempty"` // Target to be shuffled.
 }
 
 func (x *Combination) Reset() {
@@ -72,9 +72,9 @@ type ShuffleRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Targets    []string `protobuf:"bytes,1,rep,name=targets,proto3" json:"targets,omitempty"`
-	Partition  int32    `protobuf:"zigzag32,2,opt,name=partition,proto3" json:"partition,omitempty"`
-	Sequential bool     `protobuf:"varint,3,opt,name=sequential,proto3" json:"sequential,omitempty"`
+	Targets    []string `protobuf:"bytes,1,rep,name=targets,proto3" json:"targets,omitempty"`        // Target to be shuffled.
+	Partition  int32    `protobuf:"zigzag32,2,opt,name=partition,proto3" json:"partition,omitempty"` // The number of groups to divide into.
+	Sequential bool     `protobuf:"varint,3,opt,name=sequential,proto3" json:"sequential,omitempty"` // If true, do not shuffle.
 }
 
 func (x *ShuffleRequest) Reset() {
@@ -135,7 +135,7 @@ type ShuffleResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Combinations []*Combination `protobuf:"bytes,1,rep,name=combinations,proto3" json:"combinations,omitempty"`
+	Combinations []*Combination `protobuf:"bytes,1,rep,name=combinations,proto3" json:"combinations,omitempty"` // Set of targets.
 }
 
 func (x *ShuffleResponse) Reset() {

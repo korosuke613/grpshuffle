@@ -3,19 +3,19 @@ package grpshuffle;
 option go_package = "github.com/korosuke613/grpshuffle/go/grpshuffle";
 
 message Combination {
-  repeated string targets = 1;
+  repeated string targets = 1;  // Target to be shuffled.
 }
 
 message ShuffleRequest {
-  repeated string targets = 1;
-  sint32 partition = 2;
-  bool sequential = 3;
+  repeated string targets = 1;  // Target to be shuffled.
+  sint32 partition = 2;  // The number of groups to divide into.
+  bool sequential = 3;  // If true, do not shuffle.
 }
 
 message ShuffleResponse {
-  repeated Combination combinations= 1;
+  repeated Combination combinations= 1;  // Set of targets.
 }
 
 service Compute {
-  rpc Shuffle(ShuffleRequest) returns (ShuffleResponse);
+  rpc Shuffle(ShuffleRequest) returns (ShuffleResponse);  // Shuffle.
 }
