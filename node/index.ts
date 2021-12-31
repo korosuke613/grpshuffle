@@ -1,1 +1,6 @@
-export { callShuffle, callHealth } from "./GrpshuffleClient";
+export {
+  GrpshuffleRequest,
+  GrpshuffleResponse,
+  callShuffle,
+  callHealth,
+} from "./GrpshuffleClient";

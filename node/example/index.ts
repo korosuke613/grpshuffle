@@ -2,11 +2,7 @@ import express from "express";
 import morgan from "morgan";
 
 /* eslint-disable node/no-unpublished-import */
-import {
-  GrpshuffleRequest,
-  callShuffle,
-  callHealth,
-} from "../GrpshuffleClient";
+import { GrpshuffleRequest, callShuffle, callHealth } from "../index";
 /* eslint-enable node/no-unpublished-import */
 
 const port = 8080;
