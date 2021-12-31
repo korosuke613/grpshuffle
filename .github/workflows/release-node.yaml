@@ -1,17 +1,21 @@
 name: Release Node.js
 
+permissions:
+  actions: none
+  checks: none
+  contents: write
+  deployments: none
+  issues: none
+  packages: none
+  pull-requests: none
+  repository-projects: none
+  security-events: none
+  statuses: none
+
 on:
-  workflow_dispatch:
-    inputs:
-      next_version:
-        description: "Next version (ex. 0.0.2)"
-        type: string
-        required: true
-      dry_run:
-        description: "When true, publish and commit are not performed."
-        type: boolean
-        required: false
-        default: true
+  pull_request:
+    types:
+      - closed
 
 defaults:
   run:
@@ -19,8 +23,9 @@ defaults:
 
 jobs:
   release:
-    name: Release to npm (dry_run = ${{ github.event.inputs.dry_run }})
+    name: Release to npm
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'releases/grpshuffle-js/v')
     steps:
       - uses: actions/checkout@v2
         with:
@@ -33,32 +38,12 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm ci
-      - name: Setting git config
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-
       - name: Build
         run: |
-          npm version ${{ github.event.inputs.next_version }}
           make pack
 
-#      - name: Publish
-#        if: github.event.inputs.dry_run == 'false' && github.ref == 'refs/heads/main'
-#        run: npm publish
-#        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Git Commit
-        run: |
-          git add package.json
-          git commit -m "chore (node): update version"
-          git tag grpshuffle-js/v${{ github.event.inputs.next_version }}
-
-      - name: Git Push
+      - name: Publish
         if: github.event.inputs.dry_run == 'false' && github.ref == 'refs/heads/main'
-        run: |
-          git pull
-          git push origin main
-          git push origin grpshuffle-js/v${{ github.event.inputs.next_version }}
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
