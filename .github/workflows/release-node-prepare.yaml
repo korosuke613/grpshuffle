@@ -66,6 +66,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git push origin HEAD
+          git push -f origin HEAD
           git push -f origin grpshuffle-js/v${{ github.event.inputs.next_version }}
-          gh pr create --title "release (node): grpshuffle-js/v${{ github.event.inputs.next_version }}"
+          gh pr create \
+            --title "release (node): grpshuffle-js/v${{ github.event.inputs.next_version }}" \
+            --body "ref: [release-node-prepare.yaml](https://github.com/korosuke613/grpshuffle/blob/main/.github/workflows/release-node-prepare.yaml)"
