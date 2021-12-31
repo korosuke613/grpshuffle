@@ -127,4 +127,8 @@ jobs:
           ./server &
           dockerize -wait tcp://localhost:13333          
 
-      - run: ./client localhost:13333 2 chikin-nanban karamen mango jidori
+      - name: Test health
+        run: ./client localhost:13333 health | jq
+
+      - name: Test shuffle
+        run: ./client localhost:13333 shuffle 2 chikin-nanban karamen mango jidori | jq

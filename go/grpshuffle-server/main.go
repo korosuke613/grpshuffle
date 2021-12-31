@@ -15,6 +15,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	health "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -59,8 +60,9 @@ func main() {
 	)
 
 	grpshuffle.RegisterComputeServer(serv, &Server{})
-
+	health.RegisterHealthServer(serv, &healthServer{})
 	grpc_prometheus.Register(serv)
+
 	http.Handle("/metrics", promhttp.Handler())
 	go func() {
 		if err := http.ListenAndServe(":8081", nil); err != nil {
