@@ -43,6 +43,8 @@ jobs:
           node-version: 16.13
           cache: npm
           cache-dependency-path: '**/package-lock.json'
+          registry-url: 'https://registry.npmjs.org'
+
       - run: npm ci
       - name: Setting git config
         run: |
