@@ -45,7 +45,6 @@ jobs:
           make pack
 
       - name: Publish
-        if: github.event.inputs.dry_run == 'false' && github.ref == 'refs/heads/main'
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
