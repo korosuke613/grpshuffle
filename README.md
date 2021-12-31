@@ -18,7 +18,7 @@ make client
 
 ### 3. Execute client
 ```
-./client 127.0.0.1:13333 2 a b c d e
+./client 127.0.0.1:13333 shuffle 2 a b c d e
 ```
 
 result: 
@@ -56,7 +56,8 @@ go install github.com/korosuke613/grpshuffle/go/grpshuffle-client@latest
 
 ### client
 ```
-usage: client HOST:PORT PARTITION TARGET_1 TARGET_2 ... TARGET_N
+usage: client HOST:PORT METHOD PARTITION TARGET_1 TARGET_2 ... TARGET_N
+METHOD: shuffle, health
 ```
 
 ## Build
