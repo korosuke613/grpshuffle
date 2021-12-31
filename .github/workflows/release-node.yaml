@@ -55,7 +55,7 @@ jobs:
           make pack
 
       - name: Publish
-        if: (! github.event.inputs.dry_run) && (github.ref == 'refs/heads/main')
+        if: ! github.event.inputs.dry_run && github.ref == 'refs/heads/main'
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -67,7 +67,7 @@ jobs:
           git tag grpshuffle-js/v${{ github.event.inputs.next_version }}
 
       - name: Git Push
-        if: (! github.event.inputs.dry_run) && (github.ref == 'refs/heads/main') 
+        if: ! github.event.inputs.dry_run && github.ref == 'refs/heads/main'
         run: |
           git push origin main
           git push origin grpshuffle-js/v${{ github.event.inputs.next_version }}
