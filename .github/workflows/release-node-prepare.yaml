@@ -7,7 +7,7 @@ permissions:
   deployments: none
   issues: none
   packages: none
-  pull-requests: none
+  pull-requests: write
   repository-projects: none
   security-events: none
   statuses: none
@@ -20,7 +20,7 @@ on:
         type: string
         required: true
       dry_run:
-        description: "When true, publish and commit are not performed."
+        description: "When true, skip git push & gh pr create"
         type: boolean
         required: false
         default: true
