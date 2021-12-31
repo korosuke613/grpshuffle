@@ -1,22 +1,10 @@
 name: Release Node.js
 
-permissions:
-  actions: none
-  checks: none
-  contents: write
-  deployments: none
-  issues: none
-  packages: none
-  pull-requests: none
-  repository-projects: none
-  security-events: none
-  statuses: none
-
 on:
   workflow_dispatch:
     inputs:
       next_version:
-        description: "Next version"
+        description: "Next version (ex. 0.0.2)"
         type: string
         required: true
       dry_run:
@@ -56,11 +44,11 @@ jobs:
           npm version ${{ github.event.inputs.next_version }}
           make pack
 
-      - name: Publish
-        if: github.event.inputs.dry_run == 'false' && github.ref == 'refs/heads/main'
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#      - name: Publish
+#        if: github.event.inputs.dry_run == 'false' && github.ref == 'refs/heads/main'
+#        run: npm publish
+#        env:
+#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Git Commit
         run: |
@@ -71,5 +59,6 @@ jobs:
       - name: Git Push
         if: github.event.inputs.dry_run == 'false' && github.ref == 'refs/heads/main'
         run: |
+          git pull
           git push origin main
           git push origin grpshuffle-js/v${{ github.event.inputs.next_version }}
