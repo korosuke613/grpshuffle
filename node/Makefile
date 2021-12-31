@@ -15,6 +15,7 @@ all: protogen
 
 .PHONY: protogen
 protogen: ../health.proto
+	mkdir -p gen
 	# generate js and .d.ts codes via grpc-tools
 	$(GRPC_TOOL) \
     	--plugin=${TYPESCRIPT_PLUGIN} \
@@ -23,6 +24,12 @@ protogen: ../health.proto
     	--ts_out=grpc_js:$(OUTPUT) \
     	-I $(INCLUDE_PROTO_DIR) \
     	$(PROTO_PATH)
+
+pack: protogen
+	npm run compile
+	mkdir -p dist/gen
+	cp ./gen/* ./dist/gen
+	npm pack
 
 clean:
 	rm -rf $(OUTPUT) && mkdir -p $(OUTPUT)

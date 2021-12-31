@@ -6,7 +6,7 @@ import {
   GrpshuffleRequest,
   callShuffle,
   callHealth,
-} from "../grpshuffle-client";
+} from "../GrpshuffleClient";
 /* eslint-enable node/no-unpublished-import */
 
 const port = 8080;
