@@ -7,8 +7,14 @@ TYPESCRIPT_PLUGIN=protoc-gen-ts=$(NPM_BIN)/protoc-gen-ts
 INCLUDE_PROTO_DIR=..
 PROTO_PATH=../*.proto
 
+.PHONY: all
+all: protogen
+
+../health.proto:
+	curl -fsL -o ../health.proto https://raw.githubusercontent.com/grpc/grpc/master/src/proto/grpc/health/v1/health.proto
+
 .PHONY: protogen
-protogen:
+protogen: ../health.proto
 	# generate js and .d.ts codes via grpc-tools
 	$(GRPC_TOOL) \
     	--plugin=${TYPESCRIPT_PLUGIN} \
