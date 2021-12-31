@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "author": "Futa HIRAKOBA <korosuke613613@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "lint": "eslint ./**/*.ts"
+  },
   "dependencies": {
     "@grpc/grpc-js": "^1.4.5",
     "google-protobuf": "^3.19.1"
