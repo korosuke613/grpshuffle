@@ -3,4 +3,4 @@ export {
   GrpshuffleResponse,
   callShuffle,
   callHealth,
-} from "./GrpshuffleClient";
+} from "./src/GrpshuffleClient";
