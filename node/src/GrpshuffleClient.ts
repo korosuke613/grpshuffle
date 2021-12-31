@@ -1,7 +1,7 @@
-import { ShuffleRequest, ShuffleResponse } from "./gen/grpshuffle_pb";
-import { ComputeClient } from "./gen/grpshuffle_grpc_pb";
-import { HealthCheckRequest, HealthCheckResponse } from "./gen/health_pb";
-import { HealthClient } from "./gen/health_grpc_pb";
+import { ShuffleRequest, ShuffleResponse } from "../gen/grpshuffle_pb";
+import { ComputeClient } from "../gen/grpshuffle_grpc_pb";
+import { HealthCheckRequest, HealthCheckResponse } from "../gen/health_pb";
+import { HealthClient } from "../gen/health_grpc_pb";
 import { credentials } from "@grpc/grpc-js";
 
 const defaultServerUrl = "localhost:13333";
