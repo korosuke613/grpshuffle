@@ -1,0 +1,72 @@
+name: Release
+
+permissions:
+  actions: none
+  checks: none
+  contents: write
+  deployments: none
+  issues: none
+  packages: none
+  pull-requests: none
+  repository-projects: none
+  security-events: none
+  statuses: none
+
+on:
+  workflow_dispatch:
+    inputs:
+      next_version:
+        description: "Next version"
+        type: string
+        required: true
+      dry_run:
+        description: "When true, publish and commit are not performed."
+        type: boolean
+        required: false
+        default: true
+
+defaults:
+  run:
+    working-directory: node
+
+jobs:
+  release-prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: main
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.13
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
+      - run: npm ci
+      - name: Setting git config
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Build
+        run: |
+          npm version ${{ github.event.inputs.next_version }}
+          make pack
+
+      - name: Publish
+        if: ${{ ! github.event.inputs.dry_run }}
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Git Commit
+        run: |
+          git add package.json
+          git commit -m "chore (node): update version"
+          git tag grpshuffle-js/v${{ github.event.inputs.next_version }}
+
+      - name: Git Push
+        if: ${{ ! github.event.inputs.dry_run }}
+        run: |
+          git push origin main
+          git push origin grpshuffle-js/v${{ github.event.inputs.next_version }}

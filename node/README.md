@@ -11,3 +11,8 @@ npm i
 make
 ```
 
+## Publish
+```console
+make pack
+```
+
