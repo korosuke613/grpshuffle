@@ -9,8 +9,14 @@
   },
   "main": "dist/index.js",
   "module": "dist/index.js",
-  "exports": "dist/index.js",
+  "exports": "./dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/korosuke613/grpshuffle.git",
+    "directory": "node"
+  },
+  "homepage": "https://github.com/korosuke613/grpshuffle/tree/main/node#readme",
   "dependencies": {
     "@grpc/grpc-js": "1.4.5",
     "google-protobuf": "3.19.1"

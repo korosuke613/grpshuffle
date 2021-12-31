@@ -12,7 +12,6 @@ make
 ```
 
 ## Publish
-```console
-make pack
-```
+See [release-node.yaml](/.github/workflows/release-node.yaml).
+
 
