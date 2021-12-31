@@ -50,17 +50,18 @@ $(PROTOC_GEN_GO_GRPC):
 	GOBIN=$(PWD)/bin go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v$(PROTOC_GEN_GO_GRPC_VERSION)
 
 # generate markdown specification
-$(DOC_MD): grpshuffle.proto $(DOC_DIR) $(PROTOC) $(PROTOC_GEN_DOC)
-	$(RUN_PROTOC) --doc_out=$(DOC_DIR) --doc_opt=markdown,$@ $<
+$(DOC_MD): $(wildcard *.proto) $(DOC_DIR) $(PROTOC) $(PROTOC_GEN_DOC)
+	$(RUN_PROTOC) --doc_out=$(DOC_DIR) --doc_opt=markdown,$@ $(wildcard *.proto)
 
 # generate html specification
-$(DOC_HTML): grpshuffle.proto $(DOC_DIR) $(PROTOC) $(PROTOC_GEN_DOC)
-	$(RUN_PROTOC) --doc_out=$(DOC_DIR) $<
+# $(DOC_HTML): grpshuffle.proto healthcheck.proto $(DOC_DIR) $(PROTOC) $(PROTOC_GEN_DOC)
+$(DOC_HTML): $(wildcard *.proto) $(DOC_DIR) $(PROTOC) $(PROTOC_GEN_DOC)
+	$(RUN_PROTOC) --doc_out=$(DOC_DIR) $(wildcard *.proto)
 
-go/grpshuffle/grpshuffle.pb.go: grpshuffle.proto $(PROTOC) $(PROTOC_GEN_GO)
+go/grpshuffle/%.pb.go: %.proto $(PROTOC) $(PROTOC_GEN_GO)
 	$(RUN_PROTOC) --go_out=module=$(MODULE):. $<
 
-go/grpshuffle/grpshuffle_grpc.pb.go: grpshuffle.proto $(PROTOC) $(PROTOC_GEN_GO_GRPC)
+go/grpshuffle/%_grpc.pb.go: %.proto $(PROTOC) $(PROTOC_GEN_GO_GRPC)
 	$(RUN_PROTOC) --go-grpc_out=module=$(MODULE):. $<
 
 server: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle-server/*.go)
