@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
-func connect(host string, port int) (conn *grpc.ClientConn, err error) {
+func Connect(host string, port int) (conn *grpc.ClientConn, err error) {
 	// see https://pkg.go.dev/google.golang.org/grpc/keepalive#ClientParameters
 	kp := keepalive.ClientParameters{
 		Time: 60 * time.Second,
@@ -31,7 +31,15 @@ func connect(host string, port int) (conn *grpc.ClientConn, err error) {
 	return conn, nil
 }
 
-func callShuffle(conn *grpc.ClientConn, partition int32, targets []string) ([]*grpshuffle.Combination, error) {
+func CloseConnect(conn *grpc.ClientConn) {
+	err := conn.Close()
+	if err != nil {
+		log.Fatal(fmt.Errorf("close failed for healthHandler()"))
+		return
+	}
+}
+
+func Shuffle(conn *grpc.ClientConn, partition int32, targets []string) ([]*grpshuffle.Combination, error) {
 	cc := grpshuffle.NewComputeClient(conn)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -51,11 +59,11 @@ func callShuffle(conn *grpc.ClientConn, partition int32, targets []string) ([]*g
 	return res.Combinations, nil
 }
 
-type healthCheck struct {
+type HealthCheckResponse struct {
 	Status string `json:"status"`
 }
 
-func callHealth(conn *grpc.ClientConn) (*healthCheck, error) {
+func HealthCheck(conn *grpc.ClientConn) (*HealthCheckResponse, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	go func(cancel func()) {
 		time.Sleep(2500 * time.Millisecond)
@@ -69,17 +77,9 @@ func callHealth(conn *grpc.ClientConn) (*healthCheck, error) {
 		return nil, err
 	}
 
-	result := &healthCheck{
+	result := &HealthCheckResponse{
 		Status: health.HealthCheckResponse_ServingStatus_name[int32(res.Status)],
 	}
 
 	return result, nil
-}
-
-func connClose(conn *grpc.ClientConn) {
-	err := conn.Close()
-	if err != nil {
-		log.Fatal(fmt.Errorf("close failed for healthHandler()"))
-		return
-	}
 }

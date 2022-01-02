@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	host string
-	port int
+	Host string
+	Port int
 )
 
 func main() {
@@ -39,13 +39,13 @@ func main() {
 						return fmt.Errorf("the number of TARGET must be greater than partition")
 					}
 
-					conn, err := connect(host, port)
+					conn, err := Connect(Host, Port)
 					if err != nil {
 						return err
 					}
-					defer connClose(conn)
+					defer CloseConnect(conn)
 
-					rawResult, err := callShuffle(conn, int32(partition), c.Args().Slice())
+					rawResult, err := Shuffle(conn, int32(partition), c.Args().Slice())
 					if err != nil {
 						return err
 					}
@@ -63,13 +63,13 @@ func main() {
 				Name:  "health",
 				Usage: "health check server",
 				Action: func(c *cli.Context) error {
-					conn, err := connect(host, port)
+					conn, err := Connect(Host, Port)
 					if err != nil {
 						return err
 					}
-					defer connClose(conn)
+					defer CloseConnect(conn)
 
-					rawResult, err := callHealth(conn)
+					rawResult, err := HealthCheck(conn)
 					if err != nil {
 						return err
 					}
@@ -86,7 +86,7 @@ func main() {
 			{
 				Name: "http-serve",
 				Action: func(c *cli.Context) error {
-					httpServe(8080)
+					HttpServe(8080)
 					return nil
 				},
 				Flags: append([]cli.Flag{}, newGlobalFlags()...),
@@ -108,7 +108,7 @@ func newGlobalFlags() []cli.Flag {
 			Usage:       "Host address of server",
 			EnvVars:     []string{"GRPSHUFFLE_HOST"},
 			Value:       "localhost",
-			Destination: &host,
+			Destination: &Host,
 		},
 		&cli.IntFlag{
 			Name:        "port",
@@ -116,7 +116,7 @@ func newGlobalFlags() []cli.Flag {
 			Usage:       "Port of server",
 			EnvVars:     []string{"GRPSHUFFLE_PORT"},
 			Value:       13333,
-			Destination: &port,
+			Destination: &Port,
 		},
 	}
 }

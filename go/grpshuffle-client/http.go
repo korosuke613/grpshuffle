@@ -10,13 +10,13 @@ import (
 	"time"
 )
 
-type response struct {
+type HttpResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Result interface{} `json:"result"`
 }
 
-func httpServe(port int) {
+func HttpServe(port int) {
 	addr := fmt.Sprintf(":%v", port)
 
 	http.HandleFunc("/shuffle", shuffleHandler)
@@ -26,12 +26,12 @@ func httpServe(port int) {
 }
 
 func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
-	conn, err := connect(host, port)
+	conn, err := Connect(Host, Port)
 	if err != nil {
 		newErrorResponse(writer, 500, "Internal Server Error")
 		return
 	}
-	defer connClose(conn)
+	defer CloseConnect(conn)
 
 	rawPartition := request.FormValue("partition")
 	if rawPartition == "" {
@@ -50,14 +50,14 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	targets := strings.Split(rawTargets, ",")
-	result, err := callShuffle(conn, int32(partition), targets)
+	result, err := Shuffle(conn, int32(partition), targets)
 	if err != nil {
 		newErrorResponse(writer, 504, "Gateway Timeout")
 		log.Print(err)
 		return
 	}
 
-	res, err := json.Marshal(response{
+	res, err := json.Marshal(HttpResponse{
 		Status: 200,
 		Msg:    "Ok",
 		Result: result,
@@ -75,21 +75,21 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 }
 
 func healthHandler(writer http.ResponseWriter, _ *http.Request) {
-	conn, err := connect(host, port)
+	conn, err := Connect(Host, Port)
 	if err != nil {
 		newErrorResponse(writer, 500, "Internal Server Error")
 		return
 	}
-	defer connClose(conn)
+	defer CloseConnect(conn)
 
-	result, err := callHealth(conn)
+	result, err := HealthCheck(conn)
 	if err != nil {
 		newErrorResponse(writer, 504, "Gateway Timeout")
 		log.Print(err)
 		return
 	}
 
-	res, err := json.Marshal(response{
+	res, err := json.Marshal(HttpResponse{
 		Status: 200,
 		Msg:    "Ok",
 		Result: result,
@@ -108,7 +108,7 @@ func healthHandler(writer http.ResponseWriter, _ *http.Request) {
 
 func newErrorResponse(writer http.ResponseWriter, statusCode int, msg string) {
 	writer.WriteHeader(statusCode)
-	res, err := json.Marshal(response{
+	res, err := json.Marshal(HttpResponse{
 		Status: statusCode,
 		Msg:    msg,
 		Result: nil,
