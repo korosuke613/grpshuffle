@@ -1,17 +1,17 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/urfave/cli/v2"
-	"google.golang.org/grpc"
 )
 
 var (
-	host string
-	port int
+	Host string
+	Port int
 )
 
 func main() {
@@ -39,21 +39,23 @@ func main() {
 						return fmt.Errorf("the number of TARGET must be greater than partition")
 					}
 
-					conn, err := connect(host, port)
+					conn, err := Connect(Host, Port)
 					if err != nil {
 						return err
 					}
-					defer func(conn *grpc.ClientConn) {
-						err := conn.Close()
-						if err != nil {
-							log.Fatal(err)
-						}
-					}(conn)
+					defer CloseConnect(conn)
 
-					err = callShuffle(conn, int32(partition), c.Args().Slice())
+					rawResult, err := Shuffle(conn, int32(partition), c.Args().Slice())
 					if err != nil {
 						return err
 					}
+
+					result, err := json.MarshalIndent(rawResult, "", "  ")
+					if err != nil {
+						return err
+					}
+
+					fmt.Println(string(result))
 					return nil
 				},
 			},
@@ -61,20 +63,30 @@ func main() {
 				Name:  "health",
 				Usage: "health check server",
 				Action: func(c *cli.Context) error {
-					conn, err := connect(host, port)
+					conn, err := Connect(Host, Port)
 					if err != nil {
 						return err
 					}
-					defer func(conn *grpc.ClientConn) {
-						err := conn.Close()
-						if err != nil {
-							log.Fatal(err)
-						}
-					}(conn)
-					err = callHealth(conn)
+					defer CloseConnect(conn)
+
+					rawResult, err := HealthCheck(conn)
 					if err != nil {
 						return err
 					}
+					result, err := json.MarshalIndent(rawResult, "", "  ")
+					if err != nil {
+						return err
+					}
+
+					fmt.Println(string(result))
+					return nil
+				},
+				Flags: append([]cli.Flag{}, newGlobalFlags()...),
+			},
+			{
+				Name: "http-serve",
+				Action: func(c *cli.Context) error {
+					HttpServe(8080)
 					return nil
 				},
 				Flags: append([]cli.Flag{}, newGlobalFlags()...),
@@ -96,7 +108,7 @@ func newGlobalFlags() []cli.Flag {
 			Usage:       "Host address of server",
 			EnvVars:     []string{"GRPSHUFFLE_HOST"},
 			Value:       "localhost",
-			Destination: &host,
+			Destination: &Host,
 		},
 		&cli.IntFlag{
 			Name:        "port",
@@ -104,7 +116,7 @@ func newGlobalFlags() []cli.Flag {
 			Usage:       "Port of server",
 			EnvVars:     []string{"GRPSHUFFLE_PORT"},
 			Value:       13333,
-			Destination: &port,
+			Destination: &Port,
 		},
 	}
 }

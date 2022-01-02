@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/korosuke613/grpshuffle/go/grpshuffle"
@@ -13,7 +13,8 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
-func connect(host string, port int) (conn *grpc.ClientConn, err error) {
+// Connect is create grpc.ClientConn
+func Connect(host string, port int) (conn *grpc.ClientConn, err error) {
 	// see https://pkg.go.dev/google.golang.org/grpc/keepalive#ClientParameters
 	kp := keepalive.ClientParameters{
 		Time: 60 * time.Second,
@@ -31,7 +32,17 @@ func connect(host string, port int) (conn *grpc.ClientConn, err error) {
 	return conn, nil
 }
 
-func callShuffle(conn *grpc.ClientConn, partition int32, targets []string) error {
+// CloseConnect is close grpc.ClientConn
+func CloseConnect(conn *grpc.ClientConn) {
+	err := conn.Close()
+	if err != nil {
+		log.Fatal(fmt.Errorf("close failed for healthHandler()"))
+		return
+	}
+}
+
+// Shuffle is request to grpshuffle.ComputeClient
+func Shuffle(conn *grpc.ClientConn, partition int32, targets []string) ([]*grpshuffle.Combination, error) {
 	cc := grpshuffle.NewComputeClient(conn)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -45,19 +56,19 @@ func callShuffle(conn *grpc.ClientConn, partition int32, targets []string) error
 		Partition: partition,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	result, err := json.MarshalIndent(res.Combinations, "", "  ")
-	if err != nil {
-		return err
-	}
-	fmt.Println(string(result))
-
-	return nil
+	return res.Combinations, nil
 }
 
-func callHealth(conn *grpc.ClientConn) error {
+// HealthCheckResponse is response HealthCheck
+type HealthCheckResponse struct {
+	Status string `json:"status"`
+}
+
+// HealthCheck is request to grpc_health_v1.HealthClient
+func HealthCheck(conn *grpc.ClientConn) (*HealthCheckResponse, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	go func(cancel func()) {
 		time.Sleep(2500 * time.Millisecond)
@@ -68,17 +79,12 @@ func callHealth(conn *grpc.ClientConn) error {
 
 	res, err := healthClient.Check(ctx, &health.HealthCheckRequest{})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	status := map[string]string{
-		"status": health.HealthCheckResponse_ServingStatus_name[int32(res.Status)],
+	result := &HealthCheckResponse{
+		Status: health.HealthCheckResponse_ServingStatus_name[int32(res.Status)],
 	}
-	result, err := json.MarshalIndent(status, "", "  ")
-	if err != nil {
-		return err
-	}
-	fmt.Println(string(result))
 
-	return nil
+	return result, nil
 }
