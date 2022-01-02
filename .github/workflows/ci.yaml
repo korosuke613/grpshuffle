@@ -127,7 +127,7 @@ jobs:
           dockerize -wait tcp://localhost:13333          
 
       - name: Test health
-        run: ./client localhost:13333 health | jq
+        run: ./client health --host localhost --port 13333 | jq --exit-status
 
       - name: Test shuffle
-        run: ./client localhost:13333 shuffle 2 chikin-nanban karamen mango jidori | jq
+        run: ./client shuffle --host localhost --port 13333 --partition 2 chikin-nanban karamen mango jidori | jq --exit-status
