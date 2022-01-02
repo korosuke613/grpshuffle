@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
+// Connect is create grpc.ClientConn
 func Connect(host string, port int) (conn *grpc.ClientConn, err error) {
 	// see https://pkg.go.dev/google.golang.org/grpc/keepalive#ClientParameters
 	kp := keepalive.ClientParameters{
@@ -31,6 +32,7 @@ func Connect(host string, port int) (conn *grpc.ClientConn, err error) {
 	return conn, nil
 }
 
+// CloseConnect is close grpc.ClientConn
 func CloseConnect(conn *grpc.ClientConn) {
 	err := conn.Close()
 	if err != nil {
@@ -39,6 +41,7 @@ func CloseConnect(conn *grpc.ClientConn) {
 	}
 }
 
+// Shuffle is request to grpshuffle.ComputeClient
 func Shuffle(conn *grpc.ClientConn, partition int32, targets []string) ([]*grpshuffle.Combination, error) {
 	cc := grpshuffle.NewComputeClient(conn)
 
@@ -59,10 +62,12 @@ func Shuffle(conn *grpc.ClientConn, partition int32, targets []string) ([]*grpsh
 	return res.Combinations, nil
 }
 
+// HealthCheckResponse is response HealthCheck
 type HealthCheckResponse struct {
 	Status string `json:"status"`
 }
 
+// HealthCheck is request to grpc_health_v1.HealthClient
 func HealthCheck(conn *grpc.ClientConn) (*HealthCheckResponse, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	go func(cancel func()) {

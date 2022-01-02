@@ -10,12 +10,14 @@ import (
 	"time"
 )
 
+// HttpResponse is response http server for grpshuffle-client
 type HttpResponse struct {
 	Status int         `json:"status"`
 	Msg    string      `json:"msg"`
 	Result interface{} `json:"result"`
 }
 
+// HttpServe is serve http server for grpshuffle-client
 func HttpServe(port int) {
 	addr := fmt.Sprintf(":%v", port)
 
