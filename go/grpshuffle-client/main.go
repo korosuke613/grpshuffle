@@ -1,12 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/urfave/cli/v2"
-	"google.golang.org/grpc"
 )
 
 var (
@@ -43,17 +43,19 @@ func main() {
 					if err != nil {
 						return err
 					}
-					defer func(conn *grpc.ClientConn) {
-						err := conn.Close()
-						if err != nil {
-							log.Fatal(err)
-						}
-					}(conn)
+					defer connClose(conn)
 
-					err = callShuffle(conn, int32(partition), c.Args().Slice())
+					rawResult, err := callShuffle(conn, int32(partition), c.Args().Slice())
 					if err != nil {
 						return err
 					}
+
+					result, err := json.MarshalIndent(rawResult, "", "  ")
+					if err != nil {
+						return err
+					}
+
+					fmt.Println(string(result))
 					return nil
 				},
 			},
@@ -65,16 +67,26 @@ func main() {
 					if err != nil {
 						return err
 					}
-					defer func(conn *grpc.ClientConn) {
-						err := conn.Close()
-						if err != nil {
-							log.Fatal(err)
-						}
-					}(conn)
-					err = callHealth(conn)
+					defer connClose(conn)
+
+					rawResult, err := callHealth(conn)
 					if err != nil {
 						return err
 					}
+					result, err := json.MarshalIndent(rawResult, "", "  ")
+					if err != nil {
+						return err
+					}
+
+					fmt.Println(string(result))
+					return nil
+				},
+				Flags: append([]cli.Flag{}, newGlobalFlags()...),
+			},
+			{
+				Name: "http-serve",
+				Action: func(c *cli.Context) error {
+					httpServe(8080)
 					return nil
 				},
 				Flags: append([]cli.Flag{}, newGlobalFlags()...),

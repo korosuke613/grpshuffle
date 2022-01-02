@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/korosuke613/grpshuffle/go/grpshuffle"
@@ -31,7 +31,7 @@ func connect(host string, port int) (conn *grpc.ClientConn, err error) {
 	return conn, nil
 }
 
-func callShuffle(conn *grpc.ClientConn, partition int32, targets []string) error {
+func callShuffle(conn *grpc.ClientConn, partition int32, targets []string) ([]*grpshuffle.Combination, error) {
 	cc := grpshuffle.NewComputeClient(conn)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -45,19 +45,17 @@ func callShuffle(conn *grpc.ClientConn, partition int32, targets []string) error
 		Partition: partition,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	result, err := json.MarshalIndent(res.Combinations, "", "  ")
-	if err != nil {
-		return err
-	}
-	fmt.Println(string(result))
-
-	return nil
+	return res.Combinations, nil
 }
 
-func callHealth(conn *grpc.ClientConn) error {
+type healthCheck struct {
+	Status string `json:"status"`
+}
+
+func callHealth(conn *grpc.ClientConn) (*healthCheck, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	go func(cancel func()) {
 		time.Sleep(2500 * time.Millisecond)
@@ -68,17 +66,20 @@ func callHealth(conn *grpc.ClientConn) error {
 
 	res, err := healthClient.Check(ctx, &health.HealthCheckRequest{})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	status := map[string]string{
-		"status": health.HealthCheckResponse_ServingStatus_name[int32(res.Status)],
+	result := &healthCheck{
+		Status: health.HealthCheckResponse_ServingStatus_name[int32(res.Status)],
 	}
-	result, err := json.MarshalIndent(status, "", "  ")
+
+	return result, nil
+}
+
+func connClose(conn *grpc.ClientConn) {
+	err := conn.Close()
 	if err != nil {
-		return err
+		log.Fatal(fmt.Errorf("close failed for healthHandler()"))
+		return
 	}
-	fmt.Println(string(result))
-
-	return nil
 }
