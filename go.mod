@@ -30,3 +30,6 @@ require (
 	golang.org/x/text v0.3.6 // indirect
 	google.golang.org/genproto v0.0.0-20210708141623-e76da96a951f // indirect
 )
+
+replace github.com/korosuke613/grpshuffle/go/grpshuffle_client => ./go/grpshuffle_client
+replace github.com/korosuke613/grpshuffle/go/grpshuffle_server => ./go/grpshuffle_server

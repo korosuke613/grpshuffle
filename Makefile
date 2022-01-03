@@ -3,7 +3,6 @@ PROTOC_VERSION = 3.17.3
 PROTOC_GEN_DOC_VERSION = 1.4.1
 PROTOC_GEN_GO_VERSION = 1.26.0
 PROTOC_GEN_GO_GRPC_VERSION = 1.1.0
-PLATFORM = osx
 
 MODULE := $(shell awk '/^module / {print $$2}' go.mod)
 PWD := $(shell pwd)
@@ -18,12 +17,21 @@ RUN_PROTOC = PATH=$(PWD)/bin:$$PATH $(PROTOC) -I$(PWD)/include -I.
 DOC_MD = $(DOC_DIR)/grpshuffle.md
 DOC_HTML = $(DOC_DIR)/index.html
 
+PLATFORM = osx
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	PLATFORM = linux
+endif
+ifeq ($(UNAME_S),Darwin)
+	PLATFORM = osx
+endif
+
 .PHONY: all
-all: doc server client
+all: doc grpshuffle_server grpshuffle_client
 
 .PHONY: clean
 clean:
-	rm -f grpshuffle.md server client
+	rm -f grpshuffle.md grpshuffle_server grpshuffle_client
 
 .PHONY: fullclean
 fullclean: clean
@@ -64,10 +72,12 @@ go/grpshuffle/%.pb.go: %.proto $(PROTOC) $(PROTOC_GEN_GO)
 go/grpshuffle/%_grpc.pb.go: %.proto $(PROTOC) $(PROTOC_GEN_GO_GRPC)
 	$(RUN_PROTOC) --go-grpc_out=module=$(MODULE):. $<
 
-server: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle-server/*.go)
-	go build -o $@ ./go/grpshuffle-server
+grpshuffle_server: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle_server/*.go)
+	go build -o $@ ./go/grpshuffle_server/cmd
+	chmod +x $@
 
-client: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle-client/*.go)
-	go build -o $@ ./go/grpshuffle-client
+grpshuffle_client: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle_client/*.go) 
+	go build -o $@ ./go/grpshuffle_client/cmd
+	chmod +x $@
 
 doc: $(DOC_DIR)/grpshuffle.md $(DOC_DIR)/index.html

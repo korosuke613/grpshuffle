@@ -1,4 +1,4 @@
-package main
+package grpshuffle_client
 
 import (
 	"encoding/json"

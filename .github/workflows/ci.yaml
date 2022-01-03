@@ -119,15 +119,15 @@ jobs:
           sudo tar -C /usr/local/bin -xzvf "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz"
           rm "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz"
 
-      - run: make PLATFORM=linux
+      - run: make
 
       - name: Launch server
         run: |
-          ./server &
+          ./grpshuffle_server &
           dockerize -wait tcp://localhost:13333          
 
       - name: Test health
-        run: ./client health --host localhost --port 13333 | jq --exit-status
+        run: ./grpshuffle_client health --host localhost --port 13333 | jq --exit-status
 
       - name: Test shuffle
-        run: ./client shuffle --host localhost --port 13333 --partition 2 chikin-nanban karamen mango jidori | jq --exit-status
+        run: ./grpshuffle_client shuffle --host localhost --port 13333 --partition 2 chikin-nanban karamen mango jidori | jq --exit-status
