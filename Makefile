@@ -3,7 +3,6 @@ PROTOC_VERSION = 3.17.3
 PROTOC_GEN_DOC_VERSION = 1.4.1
 PROTOC_GEN_GO_VERSION = 1.26.0
 PROTOC_GEN_GO_GRPC_VERSION = 1.1.0
-PLATFORM = osx
 
 MODULE := $(shell awk '/^module / {print $$2}' go.mod)
 PWD := $(shell pwd)
@@ -17,6 +16,15 @@ PROTOC_GEN_GO_GRPC = $(PWD)/bin/protoc-gen-go-grpc
 RUN_PROTOC = PATH=$(PWD)/bin:$$PATH $(PROTOC) -I$(PWD)/include -I.
 DOC_MD = $(DOC_DIR)/grpshuffle.md
 DOC_HTML = $(DOC_DIR)/index.html
+
+PLATFORM = osx
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	PLATFORM = linux
+endif
+ifeq ($(UNAME_S),Darwin)
+	PLATFORM = osx
+endif
 
 .PHONY: all
 all: doc grpshuffle_server grpshuffle_client
