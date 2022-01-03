@@ -6,12 +6,8 @@ import (
 	"log"
 	"os"
 
+	grps_client "github.com/korosuke613/grpshuffle/go/grpshuffle_client"
 	"github.com/urfave/cli/v2"
-)
-
-var (
-	Host string
-	Port int
 )
 
 func main() {
@@ -39,13 +35,13 @@ func main() {
 						return fmt.Errorf("the number of TARGET must be greater than partition")
 					}
 
-					conn, err := Connect(Host, Port)
+					conn, err := grps_client.Connect(grps_client.Host, grps_client.Port)
 					if err != nil {
 						return err
 					}
-					defer CloseConnect(conn)
+					defer grps_client.CloseConnect(conn)
 
-					rawResult, err := Shuffle(conn, int32(partition), c.Args().Slice())
+					rawResult, err := grps_client.Shuffle(conn, int32(partition), c.Args().Slice())
 					if err != nil {
 						return err
 					}
@@ -63,13 +59,13 @@ func main() {
 				Name:  "health",
 				Usage: "health check server",
 				Action: func(c *cli.Context) error {
-					conn, err := Connect(Host, Port)
+					conn, err := grps_client.Connect(grps_client.Host, grps_client.Port)
 					if err != nil {
 						return err
 					}
-					defer CloseConnect(conn)
+					defer grps_client.CloseConnect(conn)
 
-					rawResult, err := HealthCheck(conn)
+					rawResult, err := grps_client.HealthCheck(conn)
 					if err != nil {
 						return err
 					}
@@ -86,7 +82,7 @@ func main() {
 			{
 				Name: "http-serve",
 				Action: func(c *cli.Context) error {
-					HttpServe(8080)
+					grps_client.HttpServe(8080)
 					return nil
 				},
 				Flags: append([]cli.Flag{}, newGlobalFlags()...),
@@ -108,7 +104,7 @@ func newGlobalFlags() []cli.Flag {
 			Usage:       "Host address of server",
 			EnvVars:     []string{"GRPSHUFFLE_HOST"},
 			Value:       "localhost",
-			Destination: &Host,
+			Destination: &grps_client.Host,
 		},
 		&cli.IntFlag{
 			Name:        "port",
@@ -116,7 +112,7 @@ func newGlobalFlags() []cli.Flag {
 			Usage:       "Port of server",
 			EnvVars:     []string{"GRPSHUFFLE_PORT"},
 			Value:       13333,
-			Destination: &Port,
+			Destination: &grps_client.Port,
 		},
 	}
 }
