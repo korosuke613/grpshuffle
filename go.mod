@@ -32,3 +32,4 @@ require (
 )
 
 replace github.com/korosuke613/grpshuffle/go/grpshuffle_client => ./go/grpshuffle_client
+replace github.com/korosuke613/grpshuffle/go/grpshuffle_server => ./go/grpshuffle_server

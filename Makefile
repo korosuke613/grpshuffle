@@ -64,8 +64,9 @@ go/grpshuffle/%.pb.go: %.proto $(PROTOC) $(PROTOC_GEN_GO)
 go/grpshuffle/%_grpc.pb.go: %.proto $(PROTOC) $(PROTOC_GEN_GO_GRPC)
 	$(RUN_PROTOC) --go-grpc_out=module=$(MODULE):. $<
 
-server: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle-server/*.go)
-	go build -o $@ ./go/grpshuffle-server
+server: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle_server/*.go)
+	go build -o $@ ./go/grpshuffle_server/cmd
+	chmod +x ./server
 
 client: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle_client/*.go) 
 	go build -o $@ ./go/grpshuffle_client/cmd

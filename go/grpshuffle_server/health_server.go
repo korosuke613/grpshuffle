@@ -1,4 +1,4 @@
-package main
+package grpshuffle_server
 
 import (
 	"context"
@@ -8,15 +8,15 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type healthServer struct {
+type HealthServer struct {
 }
 
-func (h *healthServer) Check(context.Context, *health.HealthCheckRequest) (*health.HealthCheckResponse, error) {
+func (h *HealthServer) Check(context.Context, *health.HealthCheckRequest) (*health.HealthCheckResponse, error) {
 	return &health.HealthCheckResponse{
 		Status: health.HealthCheckResponse_SERVING,
 	}, nil
 }
 
-func (h *healthServer) Watch(*health.HealthCheckRequest, health.Health_WatchServer) error {
+func (h *HealthServer) Watch(*health.HealthCheckRequest, health.Health_WatchServer) error {
 	return status.Error(codes.Unimplemented, "watch is not implemented.")
 }

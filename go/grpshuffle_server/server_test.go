@@ -1,10 +1,12 @@
-package main
+package grpshuffle_server_test
 
 import (
 	"context"
-	"github.com/korosuke613/grpshuffle/go/grpshuffle"
 	"reflect"
 	"testing"
+
+	"github.com/korosuke613/grpshuffle/go/grpshuffle"
+	"github.com/korosuke613/grpshuffle/go/grpshuffle_server"
 )
 
 func TestServer_Shuffle(t *testing.T) {
@@ -79,7 +81,7 @@ func TestServer_Shuffle(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &Server{
+			s := &grpshuffle_server.Server{
 				UnimplementedComputeServer: tt.fields.UnimplementedComputeServer,
 			}
 			got, err := s.Shuffle(tt.args.ctx, tt.args.req)

@@ -1,4 +1,4 @@
-package main
+package grpshuffle_server
 
 import (
 	"context"
