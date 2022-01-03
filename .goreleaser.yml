@@ -9,7 +9,7 @@
 builds:
   - env:
       - CGO_ENABLED=0
-    main: ./go/grpshuffle_client/cmd
+    main: ./go/grpshuffle_client
     id: grpshuffle_client
     binary: grpshuffle_client
     goos:
@@ -18,7 +18,7 @@ builds:
       - darwin
   - env:
       - CGO_ENABLED=0
-    main: ./go/grpshuffle_server/cmd
+    main: ./go/grpshuffle_server
     id: grpshuffle_server
     binary: grpshuffle_server
     goos:

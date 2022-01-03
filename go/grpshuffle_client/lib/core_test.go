@@ -3,7 +3,7 @@ package grpshuffle_client_test
 import (
 	"context"
 	"github.com/korosuke613/grpshuffle/go/grpshuffle"
-	"github.com/korosuke613/grpshuffle/go/grpshuffle_client"
+	grpshuffleClient "github.com/korosuke613/grpshuffle/go/grpshuffle_client/lib"
 	health "google.golang.org/grpc/health/grpc_health_v1"
 	"reflect"
 	"testing"
@@ -54,7 +54,7 @@ func TestShuffle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual, err := grpshuffle_client.Shuffle(&tt.args.cc, 2, []string{"a", "b", "c", "d"})
+			actual, err := grpshuffleClient.Shuffle(&tt.args.cc, 2, []string{"a", "b", "c", "d"})
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Shuffle() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -74,7 +74,7 @@ func TestHealthCheck(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    *grpshuffle_client.HealthCheckResponse
+		want    *grpshuffleClient.HealthCheckResponse
 		wantErr bool
 	}{
 		{
@@ -89,7 +89,7 @@ func TestHealthCheck(t *testing.T) {
 				},
 				d: 3 * time.Second,
 			},
-			want: &grpshuffle_client.HealthCheckResponse{
+			want: &grpshuffleClient.HealthCheckResponse{
 				Status: "SERVING",
 			},
 			wantErr: false,
@@ -98,7 +98,7 @@ func TestHealthCheck(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual, err := grpshuffle_client.HealthCheck(&tt.args.hc)
+			actual, err := grpshuffleClient.HealthCheck(&tt.args.hc)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("HealthCheck() error = %v, wantErr %v", err, tt.wantErr)
 			}
