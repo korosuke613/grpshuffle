@@ -42,8 +42,7 @@ func CloseConnect(conn *grpc.ClientConn) {
 }
 
 // Shuffle is request to grpshuffle.ComputeClient
-func Shuffle(conn *grpc.ClientConn, partition int32, targets []string) ([]*grpshuffle.Combination, error) {
-	cc := grpshuffle.NewComputeClient(conn)
+func Shuffle(cc *grpshuffle.ComputeClient, partition int32, targets []string) ([]*grpshuffle.Combination, error) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	go func(cancel func()) {
@@ -51,7 +50,7 @@ func Shuffle(conn *grpc.ClientConn, partition int32, targets []string) ([]*grpsh
 		cancel()
 	}(cancel)
 
-	res, err := cc.Shuffle(ctx, &grpshuffle.ShuffleRequest{
+	res, err := (*cc).Shuffle(ctx, &grpshuffle.ShuffleRequest{
 		Targets:   targets,
 		Partition: partition,
 	})
@@ -68,16 +67,14 @@ type HealthCheckResponse struct {
 }
 
 // HealthCheck is request to grpc_health_v1.HealthClient
-func HealthCheck(conn *grpc.ClientConn) (*HealthCheckResponse, error) {
+func HealthCheck(hc *health.HealthClient) (*HealthCheckResponse, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	go func(cancel func()) {
 		time.Sleep(2500 * time.Millisecond)
 		cancel()
 	}(cancel)
 
-	healthClient := health.NewHealthClient(conn)
-
-	res, err := healthClient.Check(ctx, &health.HealthCheckRequest{})
+	res, err := (*hc).Check(ctx, &health.HealthCheckRequest{})
 	if err != nil {
 		return nil, err
 	}

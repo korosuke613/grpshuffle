@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/korosuke613/grpshuffle/go/grpshuffle"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"log"
 	"os"
 
-	grps_client "github.com/korosuke613/grpshuffle/go/grpshuffle_client"
+	grpsClient "github.com/korosuke613/grpshuffle/go/grpshuffle_client"
 	"github.com/urfave/cli/v2"
 )
 
@@ -35,13 +37,14 @@ func main() {
 						return fmt.Errorf("the number of TARGET must be greater than partition")
 					}
 
-					conn, err := grps_client.Connect(grps_client.Host, grps_client.Port)
+					conn, err := grpsClient.Connect(grpsClient.Host, grpsClient.Port)
 					if err != nil {
 						return err
 					}
-					defer grps_client.CloseConnect(conn)
+					defer grpsClient.CloseConnect(conn)
 
-					rawResult, err := grps_client.Shuffle(conn, int32(partition), c.Args().Slice())
+					cc := grpshuffle.NewComputeClient(conn)
+					rawResult, err := grpsClient.Shuffle(&cc, int32(partition), c.Args().Slice())
 					if err != nil {
 						return err
 					}
@@ -59,13 +62,14 @@ func main() {
 				Name:  "health",
 				Usage: "health check server",
 				Action: func(c *cli.Context) error {
-					conn, err := grps_client.Connect(grps_client.Host, grps_client.Port)
+					conn, err := grpsClient.Connect(grpsClient.Host, grpsClient.Port)
 					if err != nil {
 						return err
 					}
-					defer grps_client.CloseConnect(conn)
+					defer grpsClient.CloseConnect(conn)
 
-					rawResult, err := grps_client.HealthCheck(conn)
+					hc := grpc_health_v1.NewHealthClient(conn)
+					rawResult, err := grpsClient.HealthCheck(&hc)
 					if err != nil {
 						return err
 					}
@@ -82,7 +86,7 @@ func main() {
 			{
 				Name: "http-serve",
 				Action: func(c *cli.Context) error {
-					grps_client.HttpServe(8080)
+					grpsClient.HttpServe(8080)
 					return nil
 				},
 				Flags: append([]cli.Flag{}, newGlobalFlags()...),
@@ -104,7 +108,7 @@ func newGlobalFlags() []cli.Flag {
 			Usage:       "Host address of server",
 			EnvVars:     []string{"GRPSHUFFLE_HOST"},
 			Value:       "localhost",
-			Destination: &grps_client.Host,
+			Destination: &grpsClient.Host,
 		},
 		&cli.IntFlag{
 			Name:        "port",
@@ -112,7 +116,7 @@ func newGlobalFlags() []cli.Flag {
 			Usage:       "Port of server",
 			EnvVars:     []string{"GRPSHUFFLE_PORT"},
 			Value:       13333,
-			Destination: &grps_client.Port,
+			Destination: &grpsClient.Port,
 		},
 	}
 }

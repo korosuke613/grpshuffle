@@ -3,6 +3,8 @@ package grpshuffle_client
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/korosuke613/grpshuffle/go/grpshuffle"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"log"
 	"net/http"
 	"strconv"
@@ -52,7 +54,8 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	targets := strings.Split(rawTargets, ",")
-	result, err := Shuffle(conn, int32(partition), targets)
+	cc := grpshuffle.NewComputeClient(conn)
+	result, err := Shuffle(&cc, int32(partition), targets)
 	if err != nil {
 		newErrorResponse(writer, 504, "Gateway Timeout")
 		log.Print(err)
@@ -84,7 +87,8 @@ func healthHandler(writer http.ResponseWriter, _ *http.Request) {
 	}
 	defer CloseConnect(conn)
 
-	result, err := HealthCheck(conn)
+	hc := grpc_health_v1.NewHealthClient(conn)
+	result, err := HealthCheck(&hc)
 	if err != nil {
 		newErrorResponse(writer, 504, "Gateway Timeout")
 		log.Print(err)
