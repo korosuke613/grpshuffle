@@ -8,20 +8,26 @@ A gRPC server and client that randomly assigns targets.
 [![release npm](https://img.shields.io/npm/v/grpshuffle-js?color=EA2039&logo=npm&label=release)](https://www.npmjs.com/package/grpshuffle-js)
 
 ## Getting started
-### 1. Build server & client
+### 1. Install
+
+#### Server
 ```
-make server
-make client
+go install github.com/korosuke613/grpshuffle/go/grpshuffle-server@latest
+```
+
+#### Client
+```
+go install github.com/korosuke613/grpshuffle/go/grpshuffle-client@latest
 ```
 
 ### 2. Launch server
 ```
-./server
+grpshuffle_server
 ```
 
 ### 3. Execute client
 ```
-./client 127.0.0.1:13333 shuffle 2 a b c d e
+grpshuffle_client shuffle -H localhost -P 13333 -p 2 a b c d e
 ```
 
 result: 
@@ -43,24 +49,27 @@ result:
 ]
 ```
 
-## Install
 
-### Server
-```
-go install github.com/korosuke613/grpshuffle/go/grpshuffle-server@latest
-```
-
-### Client
-```
-go install github.com/korosuke613/grpshuffle/go/grpshuffle-client@latest
-```
 
 ## Usage
 
 ### client
-```
-usage: client HOST:PORT METHOD PARTITION TARGET_1 TARGET_2 ... TARGET_N
-METHOD: shuffle, health
+```console
+❯ grpshuffle_client help
+NAME:
+   grpshuffle-client - Client of groshuffle
+
+USAGE:
+   grpshuffle_client [global options] command [command options] [arguments...]
+
+COMMANDS:
+   shuffle     shuffle
+   health      health check server
+   http-serve  
+   help, h     Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h  show help (default: false)
 ```
 
 ## Build

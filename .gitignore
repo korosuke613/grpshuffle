@@ -9,8 +9,8 @@
 /include
 /dist
 
-/client
-/server
+/grpshuffle_client
+/grpshuffle_server
 
 # Test binary, built with `go test -c`
 *.test

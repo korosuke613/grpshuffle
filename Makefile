@@ -19,11 +19,11 @@ DOC_MD = $(DOC_DIR)/grpshuffle.md
 DOC_HTML = $(DOC_DIR)/index.html
 
 .PHONY: all
-all: doc server client
+all: doc grpshuffle_server grpshuffle_client
 
 .PHONY: clean
 clean:
-	rm -f grpshuffle.md server client
+	rm -f grpshuffle.md grpshuffle_server grpshuffle_client
 
 .PHONY: fullclean
 fullclean: clean
@@ -64,12 +64,12 @@ go/grpshuffle/%.pb.go: %.proto $(PROTOC) $(PROTOC_GEN_GO)
 go/grpshuffle/%_grpc.pb.go: %.proto $(PROTOC) $(PROTOC_GEN_GO_GRPC)
 	$(RUN_PROTOC) --go-grpc_out=module=$(MODULE):. $<
 
-server: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle_server/*.go)
+grpshuffle_server: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle_server/*.go)
 	go build -o $@ ./go/grpshuffle_server/cmd
-	chmod +x ./server
+	chmod +x $@
 
-client: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle_client/*.go) 
+grpshuffle_client: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle_client/*.go) 
 	go build -o $@ ./go/grpshuffle_client/cmd
-	chmod +x ./client
+	chmod +x $@
 
 doc: $(DOC_DIR)/grpshuffle.md $(DOC_DIR)/index.html
