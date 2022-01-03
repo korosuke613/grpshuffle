@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	grpshuffleServer "github.com/korosuke613/grpshuffle/go/grpshuffle_server/lib"
 	"net"
 	"net/http"
 	"os"
@@ -12,7 +13,6 @@ import (
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/korosuke613/grpshuffle/go/grpshuffle"
-	grpsServer "github.com/korosuke613/grpshuffle/go/grpshuffle_server"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -60,8 +60,8 @@ func main() {
 		),
 	)
 
-	grpshuffle.RegisterComputeServer(serv, &grpsServer.Server{})
-	health.RegisterHealthServer(serv, &grpsServer.HealthServer{})
+	grpshuffle.RegisterComputeServer(serv, &grpshuffleServer.Server{})
+	health.RegisterHealthServer(serv, &grpshuffleServer.HealthServer{})
 	grpc_prometheus.Register(serv)
 
 	http.Handle("/metrics", promhttp.Handler())

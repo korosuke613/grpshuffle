@@ -12,12 +12,12 @@ A gRPC server and client that randomly assigns targets.
 
 #### Server
 ```
-go install github.com/korosuke613/grpshuffle/go/grpshuffle-server@latest
+go install github.com/korosuke613/grpshuffle/go/grpshuffle_server@latest
 ```
 
 #### Client
 ```
-go install github.com/korosuke613/grpshuffle/go/grpshuffle-client@latest
+go install github.com/korosuke613/grpshuffle/go/grpshuffle_client@latest
 ```
 
 ### 2. Launch server
