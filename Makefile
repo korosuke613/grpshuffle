@@ -31,7 +31,7 @@ all: doc grpshuffle_server grpshuffle_client
 
 .PHONY: clean
 clean:
-	rm -f grpshuffle.md grpshuffle_server grpshuffle_client
+	rm -f $(DOC_DIR)/index.html $(DOC_DIR)/grpshuffle.md grpshuffle_server grpshuffle_client
 
 .PHONY: fullclean
 fullclean: clean
@@ -59,12 +59,12 @@ $(PROTOC_GEN_GO_GRPC):
 
 # generate markdown specification
 $(DOC_MD): $(wildcard *.proto) $(DOC_DIR) $(PROTOC) $(PROTOC_GEN_DOC)
-	$(RUN_PROTOC) --doc_out=$(DOC_DIR) --doc_opt=markdown,$@ $(wildcard *.proto)
+	$(RUN_PROTOC) --doc_out=$(DOC_DIR) --doc_opt=markdown,$@ grpshuffle.proto
 
 # generate html specification
 # $(DOC_HTML): grpshuffle.proto healthcheck.proto $(DOC_DIR) $(PROTOC) $(PROTOC_GEN_DOC)
 $(DOC_HTML): $(wildcard *.proto) $(DOC_DIR) $(PROTOC) $(PROTOC_GEN_DOC)
-	$(RUN_PROTOC) --doc_out=$(DOC_DIR) $(wildcard *.proto)
+	$(RUN_PROTOC) --doc_out=$(DOC_DIR) grpshuffle.proto
 
 go/grpshuffle/%.pb.go: %.proto $(PROTOC) $(PROTOC_GEN_GO)
 	$(RUN_PROTOC) --go_out=module=$(MODULE):. $<
@@ -76,7 +76,7 @@ grpshuffle_server: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.
 	go build -o $@ ./go/grpshuffle_server/cmd
 	chmod +x $@
 
-grpshuffle_client: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle_client/*.go) 
+grpshuffle_client: go/grpshuffle/grpshuffle_grpc.pb.go go/grpshuffle/grpshuffle.pb.go $(wildcard go/grpshuffle_client/*.go)
 	go build -o $@ ./go/grpshuffle_client/cmd
 	chmod +x $@
 
