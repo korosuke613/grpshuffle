@@ -68,7 +68,6 @@ func main() {
 			health.RegisterHealthServer(serv, &grpshuffleServer.HealthServer{})
 			grpc_prometheus.Register(serv)
 
-			fmt.Println(grpshuffleServer.PrometheusEnable)
 			if grpshuffleServer.PrometheusEnable {
 				http.Handle("/metrics", promhttp.Handler())
 				prometheusAddr := fmt.Sprintf(":%v", grpshuffleServer.PrometheusPort)
