@@ -19,6 +19,25 @@ type HttpResponse struct {
 	Result interface{} `json:"result"`
 }
 
+type ResponseFormat string
+
+const (
+	FormatJson       = "json"
+	FormatJsonPretty = "json-pretty"
+	FormatReadable   = "readable"
+)
+
+func (r *ResponseFormat) checkType() error {
+	switch *r {
+	case FormatJson:
+	case FormatJsonPretty:
+	case FormatReadable:
+	default:
+		return fmt.Errorf("fmt parameter allows %v, %v and %v", FormatJson, FormatJsonPretty, FormatReadable)
+	}
+	return nil
+}
+
 // HttpServe is serve http server for grpshuffle-client
 func HttpServe(port int) {
 	addr := fmt.Sprintf(":%v", port)
@@ -26,6 +45,7 @@ func HttpServe(port int) {
 	http.HandleFunc("/shuffle", shuffleHandler)
 	http.HandleFunc("/", healthHandler)
 
+	log.Printf("Launch grpshuffle-client http server %v...", port)
 	log.Fatal(http.ListenAndServe(addr, logger(http.DefaultServeMux)))
 }
 
@@ -36,6 +56,15 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	defer CloseConnect(conn)
+
+	format := ResponseFormat(request.FormValue("fmt"))
+	if format != "" {
+		err = format.checkType()
+		if err != nil {
+			newErrorResponse(writer, 400, err.Error())
+			return
+		}
+	}
 
 	rawPartition := request.FormValue("partition")
 	if rawPartition == "" {
@@ -62,14 +91,61 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	res, err := json.Marshal(HttpResponse{
-		Status: 200,
-		Msg:    "Ok",
-		Result: result,
-	})
-	if err != nil {
-		log.Print(err)
-		return
+	var res []byte
+
+	switch format {
+	case FormatJson:
+		{
+			res, err = json.Marshal(HttpResponse{
+				Status: 200,
+				Msg:    "Ok",
+				Result: result,
+			})
+			if err != nil {
+				log.Print(err)
+				return
+			}
+		}
+	case FormatJsonPretty:
+		{
+			res, err = json.MarshalIndent(HttpResponse{
+				Status: 200,
+				Msg:    "Ok",
+				Result: result,
+			}, "", "  ")
+			if err != nil {
+				log.Print(err)
+				return
+			}
+		}
+	case FormatReadable:
+		{
+			var prettyResponse string
+			for i, combination := range result {
+				var targetsString string
+				for _, target := range combination.Targets {
+					if targetsString == "" {
+						targetsString = target
+					} else {
+						targetsString = fmt.Sprintf("%v, %v", targetsString, target)
+					}
+				}
+				prettyResponse = fmt.Sprintf("%vGroup %v: %v\n", prettyResponse, i, targetsString)
+			}
+			res = []byte(prettyResponse)
+		}
+	default:
+		{
+			res, err = json.Marshal(HttpResponse{
+				Status: 200,
+				Msg:    "Ok",
+				Result: result,
+			})
+			if err != nil {
+				log.Print(err)
+				return
+			}
+		}
 	}
 
 	_, err = writer.Write(res)
