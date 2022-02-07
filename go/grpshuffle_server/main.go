@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"net/http"
@@ -67,6 +68,10 @@ func main() {
 			grpshuffle.RegisterComputeServer(serv, &grpshuffleServer.Server{})
 			health.RegisterHealthServer(serv, &grpshuffleServer.HealthServer{})
 			grpc_prometheus.Register(serv)
+
+			// Register Server Reflection
+			// https://github.com/grpc/grpc-go/blob/91967153f567adc812d8da223ef984d02a3664ed/Documentation/server-reflection-tutorial.md
+			reflection.Register(serv)
 
 			if grpshuffleServer.PrometheusEnable {
 				http.Handle("/metrics", promhttp.Handler())
