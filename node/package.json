@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/korosuke613/grpshuffle/tree/main/node#readme",
   "dependencies": {
-    "@grpc/grpc-js": "1.5.4",
+    "@grpc/grpc-js": "1.5.5",
     "express": "4.17.2",
     "morgan": "1.10.0",
     "google-protobuf": "3.19.4"
@@ -32,7 +32,7 @@
     "@cybozu/eslint-config": "17.0.0",
     "grpc_tools_node_protoc_ts": "5.3.2",
     "grpc-tools": "1.11.2",
-    "ts-node": "10.4.0",
+    "ts-node": "10.5.0",
     "typescript": "4.5.5"
   },
   "files": [
