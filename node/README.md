@@ -22,7 +22,7 @@ make server
 #### Launch groshuffle client-server
 
 ```console
-npx -p express-generator -c "grpshuffle-client-server"
+npx -p grpshuffle-js -c "grpshuffle-client-server"
 ```
 
 #### Access client-server
