@@ -27,7 +27,7 @@ npx -p express-generator -c "grpshuffle-client-server"
 
 #### Access client-server
 ```console
-❯ curl "localhost:8080/shuffle?partition=2&targets=a,11,15"
+❯ curl "localhost:8080/shuffle?divide=2&targets=a,11,15"
 {"result":{"combinations":[{"targets":["15","a"]},{"targets":["11"]}]}}
 ```
 

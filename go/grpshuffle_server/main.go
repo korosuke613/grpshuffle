@@ -28,7 +28,7 @@ func extractFields(fullMethod string, req interface{}) map[string]interface{} {
 
 	switch args := req.(type) {
 	case *grpshuffle.ShuffleRequest:
-		ret["Partition"] = args.Partition
+		ret["Divide"] = args.Divide
 		ret["Targets"] = args.Targets
 	default:
 		return nil

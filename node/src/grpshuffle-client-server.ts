@@ -27,11 +27,11 @@ app.get(
   "/shuffle",
   // eslint-disable-next-line @typescript-eslint/ban-types
   async (request: express.Request<{}, {}, {}, GrpshuffleRequest>, res) => {
-    const { partition, sequential } = request.query;
+    const { divide, sequential } = request.query;
     const targets = request.query.targets;
 
     try {
-      const result = await callShuffle({ partition, sequential, targets });
+      const result = await callShuffle({ divide, sequential, targets });
       res.json(result);
     } catch (error) {
       res.status(500).json({ error });

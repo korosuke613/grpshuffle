@@ -45,7 +45,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | targets | [string](#string) | repeated | Target to be shuffled. |
-| partition | [sint32](#sint32) |  | The number of groups to divide into. |
+| divide | [uint64](#uint64) |  | The number of groups to divide into. |
 | sequential | [bool](#bool) |  | If true, do not shuffle. |
 
 

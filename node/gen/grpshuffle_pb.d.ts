@@ -33,8 +33,8 @@ export class ShuffleRequest extends jspb.Message {
     getTargetsList(): Array<string>;
     setTargetsList(value: Array<string>): ShuffleRequest;
     addTargets(value: string, index?: number): string;
-    getPartition(): number;
-    setPartition(value: number): ShuffleRequest;
+    getDivide(): number;
+    setDivide(value: number): ShuffleRequest;
     getSequential(): boolean;
     setSequential(value: boolean): ShuffleRequest;
 
@@ -51,7 +51,7 @@ export class ShuffleRequest extends jspb.Message {
 export namespace ShuffleRequest {
     export type AsObject = {
         targetsList: Array<string>,
-        partition: number,
+        divide: number,
         sequential: boolean,
     }
 }

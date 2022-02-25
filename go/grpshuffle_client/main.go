@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	var partition int
+	var divide int
 	app := &cli.App{
 		Name:  "grpshuffle-client",
 		Usage: "Client of groshuffle",
@@ -24,20 +24,16 @@ func main() {
 				Usage: "shuffle",
 				Flags: append([]cli.Flag{
 					&cli.IntFlag{
-						Name:        "partition",
-						Aliases:     []string{"p"},
+						Name:        "divide",
+						Aliases:     []string{"d"},
 						Usage:       "Number to divide",
-						EnvVars:     []string{"GRPSHUFFLE_SHUFFLE_PARTITION"},
+						EnvVars:     []string{"GRPSHUFFLE_SHUFFLE_DIVIDE"},
 						Required:    true,
-						Destination: &partition,
+						Destination: &divide,
 					},
 				}, newGlobalFlags()...),
-				ArgsUsage: "PARTITION TARGET1 TARGET2 ...",
+				ArgsUsage: "DIVIDE TARGET1 TARGET2 ...",
 				Action: func(c *cli.Context) error {
-					if partition > c.Args().Len() {
-						return fmt.Errorf("the number of TARGET must be greater than partition")
-					}
-
 					conn, err := grpshuffleClient.Connect(grpshuffleClient.Host, grpshuffleClient.Port)
 					if err != nil {
 						return err
@@ -45,7 +41,7 @@ func main() {
 					defer grpshuffleClient.CloseConnect(conn)
 
 					cc := grpshuffle.NewComputeClient(conn)
-					rawResult, err := grpshuffleClient.Shuffle(&cc, int32(partition), c.Args().Slice())
+					rawResult, err := grpshuffleClient.Shuffle(&cc, uint64(divide), c.Args().Slice())
 					if err != nil {
 						return err
 					}
