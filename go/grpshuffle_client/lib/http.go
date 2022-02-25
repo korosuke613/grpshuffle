@@ -66,14 +66,14 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 		}
 	}
 
-	rawPartition := request.FormValue("partition")
-	if rawPartition == "" {
-		newErrorResponse(writer, 400, "partition parameter is required")
+	rawDivide := request.FormValue("divide")
+	if rawDivide == "" {
+		newErrorResponse(writer, 400, "divide parameter is required")
 		return
 	}
-	partition, err := strconv.Atoi(rawPartition)
+	divide, err := strconv.Atoi(rawDivide)
 	if err != nil {
-		newErrorResponse(writer, 400, "partition parameter allows numbers")
+		newErrorResponse(writer, 400, "divide parameter allows numbers")
 		return
 	}
 
@@ -84,7 +84,7 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 	targets := strings.Split(rawTargets, ",")
 	cc := grpshuffle.NewComputeClient(conn)
-	result, err := Shuffle(&cc, int32(partition), targets)
+	result, err := Shuffle(&cc, uint64(divide), targets)
 	if err != nil {
 		newErrorResponse(writer, 504, "Gateway Timeout")
 		log.Print(err)

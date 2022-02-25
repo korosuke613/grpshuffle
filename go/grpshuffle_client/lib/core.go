@@ -42,7 +42,7 @@ func CloseConnect(conn *grpc.ClientConn) {
 }
 
 // Shuffle is request to grpshuffle.ComputeClient
-func Shuffle(cc *grpshuffle.ComputeClient, partition int32, targets []string) ([]*grpshuffle.Combination, error) {
+func Shuffle(cc *grpshuffle.ComputeClient, divide uint64, targets []string) ([]*grpshuffle.Combination, error) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	go func(cancel func()) {
@@ -51,8 +51,8 @@ func Shuffle(cc *grpshuffle.ComputeClient, partition int32, targets []string) ([
 	}(cancel)
 
 	res, err := (*cc).Shuffle(ctx, &grpshuffle.ShuffleRequest{
-		Targets:   targets,
-		Partition: partition,
+		Targets: targets,
+		Divide:  divide,
 	})
 	if err != nil {
 		return nil, err

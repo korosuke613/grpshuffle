@@ -31,7 +31,7 @@ func TestServer_Shuffle(t *testing.T) {
 				ctx: context.Background(),
 				req: &grpshuffle.ShuffleRequest{
 					Targets:    []string{"a", "b", "c", "d", "e"},
-					Partition:  1,
+					Divide:     1,
 					Sequential: true,
 				},
 			},
@@ -48,7 +48,7 @@ func TestServer_Shuffle(t *testing.T) {
 				ctx: context.Background(),
 				req: &grpshuffle.ShuffleRequest{
 					Targets:    []string{"a", "b", "c", "d", "e"},
-					Partition:  2,
+					Divide:     2,
 					Sequential: true,
 				},
 			},
@@ -66,7 +66,7 @@ func TestServer_Shuffle(t *testing.T) {
 				ctx: context.Background(),
 				req: &grpshuffle.ShuffleRequest{
 					Targets:    []string{"a", "b", "c", "d", "e", "f", "g", "h", "i"},
-					Partition:  3,
+					Divide:     3,
 					Sequential: true,
 				},
 			},

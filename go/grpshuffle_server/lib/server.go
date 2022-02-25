@@ -2,6 +2,8 @@ package grpshuffle_server
 
 import (
 	"context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"math"
 	"math/rand"
 	"time"
@@ -32,9 +34,13 @@ func (s *Server) Shuffle(ctx context.Context, req *grpshuffle.ShuffleRequest) (*
 		})
 	}
 
-	// split targets by the number of partitions.
+	if req.Divide >= uint64(len(req.Targets)) {
+		return nil, status.Errorf(codes.InvalidArgument, "Must have `divide` >= `targets` num.")
+	}
+
+	// split targets by the number of divide.
 	slicedTargets := make([]*grpshuffle.Combination, 0)
-	sliceSize := int(math.Ceil(float64(len(req.Targets)) / float64(req.Partition)))
+	sliceSize := int(math.Ceil(float64(len(req.Targets)) / float64(req.Divide)))
 	for i := 0; i < len(req.Targets); i += sliceSize {
 		endCursor := i + sliceSize
 		if endCursor > len(req.Targets) {

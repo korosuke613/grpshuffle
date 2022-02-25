@@ -8,7 +8,13 @@ message Combination {
 
 message ShuffleRequest {
   repeated string targets = 1;  // Target to be shuffled.
-  sint32 partition = 2;  // The number of groups to divide into.
+
+  // sint32 partition = 2;  // The number of groups to divide into.
+  reserved 2;
+  reserved "partition";
+
+  uint64 divide = 4;  // The number of groups to divide into.
+
   bool sequential = 3;  // If true, do not shuffle.
 }
 

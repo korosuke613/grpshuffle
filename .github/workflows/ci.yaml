@@ -130,4 +130,4 @@ jobs:
         run: ./grpshuffle_client health --host localhost --port 13333 | jq --exit-status
 
       - name: Test shuffle
-        run: ./grpshuffle_client shuffle --host localhost --port 13333 --partition 2 chikin-nanban karamen mango jidori | jq --exit-status
+        run: ./grpshuffle_client shuffle --host localhost --port 13333 --divide 2 chikin-nanban karamen mango jidori | jq --exit-status
