@@ -20,7 +20,7 @@ export const callShuffle = async (
   serverUrl = defaultServerUrl
 ): Promise<GrpshuffleResponse> => {
   const request = new ShuffleRequest();
-  request.setPartition(requestParams.partition);
+  request.setDivide(requestParams.divide);
   request.setTargetsList(requestParams.targets.split(","));
   request.setSequential(requestParams.sequential);
 

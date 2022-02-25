@@ -277,7 +277,7 @@ proto.grpshuffle.ShuffleRequest.prototype.toObject = function(opt_includeInstanc
 proto.grpshuffle.ShuffleRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     targetsList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f,
-    partition: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    divide: jspb.Message.getFieldWithDefault(msg, 4, 0),
     sequential: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
   };
 
@@ -319,9 +319,9 @@ proto.grpshuffle.ShuffleRequest.deserializeBinaryFromReader = function(msg, read
       var value = /** @type {string} */ (reader.readString());
       msg.addTargets(value);
       break;
-    case 2:
-      var value = /** @type {number} */ (reader.readSint32());
-      msg.setPartition(value);
+    case 4:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setDivide(value);
       break;
     case 3:
       var value = /** @type {boolean} */ (reader.readBool());
@@ -363,10 +363,10 @@ proto.grpshuffle.ShuffleRequest.serializeBinaryToWriter = function(message, writ
       f
     );
   }
-  f = message.getPartition();
+  f = message.getDivide();
   if (f !== 0) {
-    writer.writeSint32(
-      2,
+    writer.writeUint64(
+      4,
       f
     );
   }
@@ -418,11 +418,11 @@ proto.grpshuffle.ShuffleRequest.prototype.clearTargetsList = function() {
 
 
 /**
- * optional sint32 partition = 2;
+ * optional uint64 divide = 4;
  * @return {number}
  */
-proto.grpshuffle.ShuffleRequest.prototype.getPartition = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+proto.grpshuffle.ShuffleRequest.prototype.getDivide = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
@@ -430,8 +430,8 @@ proto.grpshuffle.ShuffleRequest.prototype.getPartition = function() {
  * @param {number} value
  * @return {!proto.grpshuffle.ShuffleRequest} returns this
  */
-proto.grpshuffle.ShuffleRequest.prototype.setPartition = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
+proto.grpshuffle.ShuffleRequest.prototype.setDivide = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
