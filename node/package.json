@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/korosuke613/grpshuffle/tree/main/node#readme",
   "dependencies": {
-    "@grpc/grpc-js": "1.5.5",
+    "@grpc/grpc-js": "1.5.7",
     "express": "4.17.3",
     "morgan": "1.10.0",
     "google-protobuf": "3.19.4"
