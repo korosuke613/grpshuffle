@@ -81,7 +81,8 @@ func main() {
 				Flags: append([]cli.Flag{}, newGlobalFlags()...),
 			},
 			{
-				Name: "http-serve",
+				Name:  "http-serve",
+				Usage: "HTTP client server",
 				Action: func(c *cli.Context) error {
 					grpshuffleClient.HttpServe(8080)
 					return nil
