@@ -2,29 +2,47 @@ package grpshuffle_client
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"time"
 
 	"github.com/korosuke613/grpshuffle/go/grpshuffle"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	health "google.golang.org/grpc/health/grpc_health_v1" // here
 	"google.golang.org/grpc/keepalive"
 )
 
-// Connect is create grpc.ClientConn
-func Connect(host string, port int) (conn *grpc.ClientConn, err error) {
+func makeDialOpts(noTls bool) []grpc.DialOption {
 	// see https://pkg.go.dev/google.golang.org/grpc/keepalive#ClientParameters
 	kp := keepalive.ClientParameters{
 		Time: 60 * time.Second,
 	}
 
+	var dialOpts []grpc.DialOption
+	dialOpts = append(dialOpts, grpc.WithKeepaliveParams(kp))
+
+	if noTls {
+		dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	} else {
+		tlsConfig := tls.Config{
+			InsecureSkipVerify: true,
+		}
+		dialOpts = append(dialOpts, grpc.WithTransportCredentials(credentials.NewTLS(&tlsConfig)))
+	}
+
+	return dialOpts
+}
+
+// Connect is create grpc.ClientConn
+func Connect(host string, port int, noTls bool) (conn *grpc.ClientConn, err error) {
 	addr := fmt.Sprintf("%v:%v", host, port)
 
-	// insecure.NewCredentials() を指定することで、TLS ではなく平文で接続
-	// 通信内容が保護できないし、不正なサーバーに接続しても検出できないので本当はダメ
-	conn, err = grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithKeepaliveParams(kp))
+	dialOpts := makeDialOpts(noTls)
+
+	conn, err = grpc.Dial(addr, dialOpts...)
 	if err != nil {
 		return nil, err
 	}

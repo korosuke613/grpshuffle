@@ -27,7 +27,7 @@ grpshuffle_server
 
 ### 3. Execute client
 ```
-grpshuffle_client shuffle -H localhost -P 13333 -p 2 a b c d e
+grpshuffle_client shuffle --no-tls -H localhost -P 13333 -p 2 a b c d e
 ```
 
 result: 
@@ -54,22 +54,39 @@ result:
 ## Usage
 
 ### client
+
+#### shuffle
+
 ```console
-❯ grpshuffle_client help
+❯ grpshuffle_client shuffle --help
 NAME:
-   grpshuffle-client - Client of groshuffle
+   grpshuffle_client shuffle - shuffle
 
 USAGE:
-   grpshuffle_client [global options] command [command options] [arguments...]
+   grpshuffle_client shuffle [command options] DIVIDE TARGET1 TARGET2 ...
 
-COMMANDS:
-   shuffle     shuffle
-   health      health check server
-   http-serve  
-   help, h     Shows a list of commands or help for one command
+OPTIONS:
+   --divide value, -d value  Number to divide (default: 0) [$GRPSHUFFLE_SHUFFLE_DIVIDE]
+   --host value, -H value    Host address of server (default: "localhost") [$GRPSHUFFLE_HOST]
+   --port value, -P value    Port of server (default: 13333) [$GRPSHUFFLE_PORT]
+   --no-tls                  If this flag is enabled, TLS is not used. (default: false) [$GRPSHUFFLE_NO_TLS]
+   --help, -h                show help (default: false)
+```
 
-GLOBAL OPTIONS:
-   --help, -h  show help (default: false)
+#### http-serve
+```console
+❯ grpshuffle_client http-serve --help
+NAME:
+   grpshuffle_client http-serve - HTTP client server
+
+USAGE:
+   grpshuffle_client http-serve [command options] [arguments...]
+
+OPTIONS:
+   --host value, -H value  Host address of server (default: "localhost") [$GRPSHUFFLE_HOST]
+   --port value, -P value  Port of server (default: 13333) [$GRPSHUFFLE_PORT]
+   --no-tls                If this flag is enabled, TLS is not used. (default: false) [$GRPSHUFFLE_NO_TLS]
+   --help, -h              show help (default: false)
 ```
 
 ## Build
