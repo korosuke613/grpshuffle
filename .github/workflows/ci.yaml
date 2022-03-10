@@ -18,8 +18,8 @@ jobs:
     name: Check go format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
           go-version: '1.17'
       - uses: actions/cache@v2
@@ -36,7 +36,7 @@ jobs:
     name: Lint go
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -46,8 +46,8 @@ jobs:
     name: Test go
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
           go-version: '1.17'
       - uses: actions/cache@v2
@@ -67,7 +67,7 @@ jobs:
       run:
         working-directory: node
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
@@ -82,7 +82,7 @@ jobs:
     name: Validate Renovate Config
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: docker pull docker.io/renovate/renovate:31.14
       - run: docker run --rm --entrypoint "bash" -v "${PWD}":/work docker.io/renovate/renovate:31.14 -c 'cd /work && renovate-config-validator'
 
@@ -90,15 +90,15 @@ jobs:
     name: Lint GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: reviewdog/action-actionlint@v1
 
   e2e-test:
     name: End-to-End testing
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
           go-version: '1.17'
 
