@@ -50,7 +50,7 @@ func HttpServe(port int) {
 }
 
 func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
-	conn, err := Connect(Host, Port)
+	conn, err := Connect(Host, Port, NoTLS)
 	if err != nil {
 		newErrorResponse(writer, 500, "Internal Server Error")
 		return
@@ -156,7 +156,7 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 }
 
 func healthHandler(writer http.ResponseWriter, _ *http.Request) {
-	conn, err := Connect(Host, Port)
+	conn, err := Connect(Host, Port, NoTLS)
 	if err != nil {
 		newErrorResponse(writer, 500, "Internal Server Error")
 		return

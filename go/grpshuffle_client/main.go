@@ -34,7 +34,7 @@ func main() {
 				}, newGlobalFlags()...),
 				ArgsUsage: "DIVIDE TARGET1 TARGET2 ...",
 				Action: func(c *cli.Context) error {
-					conn, err := grpshuffleClient.Connect(grpshuffleClient.Host, grpshuffleClient.Port)
+					conn, err := grpshuffleClient.Connect(grpshuffleClient.Host, grpshuffleClient.Port, grpshuffleClient.NoTLS)
 					if err != nil {
 						return err
 					}
@@ -59,7 +59,7 @@ func main() {
 				Name:  "health",
 				Usage: "health check server",
 				Action: func(c *cli.Context) error {
-					conn, err := grpshuffleClient.Connect(grpshuffleClient.Host, grpshuffleClient.Port)
+					conn, err := grpshuffleClient.Connect(grpshuffleClient.Host, grpshuffleClient.Port, grpshuffleClient.NoTLS)
 					if err != nil {
 						return err
 					}
@@ -114,6 +114,13 @@ func newGlobalFlags() []cli.Flag {
 			EnvVars:     []string{"GRPSHUFFLE_PORT"},
 			Value:       13333,
 			Destination: &grpshuffleClient.Port,
+		},
+		&cli.BoolFlag{
+			Name:        "no-tls",
+			Usage:       "If this flag is enabled, TLS is not used.",
+			EnvVars:     []string{"GRPSHUFFLE_NO_TLS"},
+			Value:       false,
+			Destination: &grpshuffleClient.NoTLS,
 		},
 	}
 }
