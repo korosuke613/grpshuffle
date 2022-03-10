@@ -65,8 +65,27 @@ func TestServer_Shuffle(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				req: &grpshuffle.ShuffleRequest{
-					Targets:    []string{"a", "b", "c", "d", "e", "f", "g", "h", "i"},
+					Targets:    []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"},
 					Divide:     3,
+					Sequential: true,
+				},
+			},
+			want: &grpshuffle.ShuffleResponse{
+				Combinations: []*grpshuffle.Combination{
+					{Targets: []string{"a", "b", "c", "d"}},
+					{Targets: []string{"e", "f", "g"}},
+					{Targets: []string{"h", "i", "j"}},
+				},
+			},
+		},
+		{
+			name:   "Split into four.",
+			fields: fields{UnimplementedComputeServer: grpshuffle.UnimplementedComputeServer{}},
+			args: args{
+				ctx: context.Background(),
+				req: &grpshuffle.ShuffleRequest{
+					Targets:    []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"},
+					Divide:     4,
 					Sequential: true,
 				},
 			},
@@ -74,7 +93,8 @@ func TestServer_Shuffle(t *testing.T) {
 				Combinations: []*grpshuffle.Combination{
 					{Targets: []string{"a", "b", "c"}},
 					{Targets: []string{"d", "e", "f"}},
-					{Targets: []string{"g", "h", "i"}},
+					{Targets: []string{"g", "h"}},
+					{Targets: []string{"i", "j"}},
 				},
 			},
 		},

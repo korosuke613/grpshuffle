@@ -4,7 +4,6 @@ import (
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"math"
 	"math/rand"
 	"time"
 
@@ -40,14 +39,25 @@ func (s *Server) Shuffle(ctx context.Context, req *grpshuffle.ShuffleRequest) (*
 
 	// split targets by the number of divide.
 	slicedTargets := make([]*grpshuffle.Combination, 0)
-	sliceSize := int(math.Ceil(float64(len(req.Targets)) / float64(req.Divide)))
+	average := int(uint64(len(req.Targets)) / req.Divide)
+	remainder := int(uint64(len(req.Targets)) % req.Divide)
+
+	var sliceSize int
+	loopCount := 0
 	for i := 0; i < len(req.Targets); i += sliceSize {
+		if loopCount < remainder {
+			sliceSize = average + 1
+		} else {
+			sliceSize = average
+		}
 		endCursor := i + sliceSize
+
 		if endCursor > len(req.Targets) {
 			endCursor = len(req.Targets)
 		}
 		tmp := shuffledTargets[i:endCursor]
 		slicedTargets = append(slicedTargets, &grpshuffle.Combination{Targets: tmp})
+		loopCount += 1
 	}
 
 	return &grpshuffle.ShuffleResponse{
