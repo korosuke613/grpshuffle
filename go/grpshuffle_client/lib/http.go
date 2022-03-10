@@ -77,6 +77,11 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	groupName := request.FormValue("groupName")
+	if groupName == "" {
+		groupName = "Group"
+	}
+
 	rawTargets := request.FormValue("targets")
 	if rawTargets == "" {
 		newErrorResponse(writer, 400, "targets parameter is required")
@@ -130,7 +135,7 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 						targetsString = fmt.Sprintf("%v, %v", targetsString, target)
 					}
 				}
-				prettyResponse = fmt.Sprintf("%vGroup %v: %v\n", prettyResponse, i, targetsString)
+				prettyResponse = fmt.Sprintf("%v%v %v: %v\n", prettyResponse, groupName, i, targetsString)
 			}
 			res = []byte(prettyResponse)
 		}

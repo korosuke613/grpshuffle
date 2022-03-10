@@ -15,6 +15,7 @@ import (
 
 func main() {
 	var divide int
+
 	app := &cli.App{
 		Name:  "grpshuffle-client",
 		Usage: "Client of groshuffle",
