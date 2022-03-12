@@ -2,12 +2,8 @@ package grpshuffle_server
 
 import (
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"math/rand"
-	"time"
-
 	"github.com/korosuke613/grpshuffle/go/grpshuffle"
+	"time"
 )
 
 // Server is implemented ComputeServer
@@ -22,90 +18,35 @@ var _ grpshuffle.ComputeServer = &Server{}
 
 // Shuffle is shuffle
 func (s *Server) Shuffle(ctx context.Context, req *grpshuffle.ShuffleRequest) (*grpshuffle.ShuffleResponse, error) {
-	shuffledTargets := make([]string, len(req.Targets))
-	copy(shuffledTargets, req.Targets)
-
-	if !req.Sequential {
-		// randomly swap targets.
-		rand.Seed(time.Now().UnixNano())
-		rand.Shuffle(len(req.Targets), func(i, j int) {
-			shuffledTargets[i], shuffledTargets[j] = shuffledTargets[j], shuffledTargets[i]
-		})
-	}
-
-	if req.Divide >= uint64(len(req.Targets)) {
-		return nil, status.Errorf(codes.InvalidArgument, "Must have `divide` >= `targets` num.")
-	}
-
-	// split targets by the number of divide.
-	slicedTargets := make([]*grpshuffle.Combination, 0)
-	average := int(uint64(len(req.Targets)) / req.Divide)
-	remainder := int(uint64(len(req.Targets)) % req.Divide)
-
-	var sliceSize int
-	loopCount := 0
-	for i := 0; i < len(req.Targets); i += sliceSize {
-		if loopCount < remainder {
-			sliceSize = average + 1
-		} else {
-			sliceSize = average
-		}
-		endCursor := i + sliceSize
-
-		if endCursor > len(req.Targets) {
-			endCursor = len(req.Targets)
-		}
-		tmp := shuffledTargets[i:endCursor]
-		slicedTargets = append(slicedTargets, &grpshuffle.Combination{Targets: tmp})
-		loopCount += 1
-	}
-
-	return &grpshuffle.ShuffleResponse{
-		Combinations: slicedTargets,
-	}, nil
+	return Shuffle(req)
 }
 
 // RepeatShuffle is repeat shuffle.
-func (s *Server) RepeatShuffle(ctx context.Context, req *grpshuffle.RepeatShuffleRequest) (*grpshuffle.ShuffleResponse, error) {
-	shuffledTargets := make([]string, len(req.ShuffleRequest.Targets))
-	copy(shuffledTargets, req.ShuffleRequest.Targets)
+func (s *Server) RepeatShuffle(req *grpshuffle.RepeatShuffleRequest, stream grpshuffle.Compute_RepeatShuffleServer) error {
+	times := uint64(0)
 
-	if !req.ShuffleRequest.Sequential {
-		// randomly swap targets.
-		rand.Seed(time.Now().UnixNano())
-		rand.Shuffle(len(req.Targets), func(i, j int) {
-			shuffledTargets[i], shuffledTargets[j] = shuffledTargets[j], shuffledTargets[i]
-		})
-	}
-
-	if req.ShuffleRequest.Divide >= uint64(len(req.ShuffleRequest.Targets)) {
-		return nil, status.Errorf(codes.InvalidArgument, "Must have `divide` >= `targets` num.")
-	}
-
-	// split targets by the number of divide.
-	slicedTargets := make([]*grpshuffle.Combination, 0)
-	average := int(uint64(len(req.ShuffleRequest.Targets)) / req.ShuffleRequest.Divide)
-	remainder := int(uint64(len(req.ShuffleRequest.Targets)) % req.ShuffleRequest.Divide)
-
-	var sliceSize int
-	loopCount := 0
-	for i := 0; i < len(req.ShuffleRequest.Targets); i += sliceSize {
-		if loopCount < remainder {
-			sliceSize = average + 1
-		} else {
-			sliceSize = average
+	for {
+		select {
+		// Exit when the client cancels the request.
+		case <-stream.Context().Done():
+			return nil
+		// Wait for `req.Interval` second
+		case <-time.After(time.Duration(req.Interval) * time.Second):
 		}
-		endCursor := i + sliceSize
 
-		if endCursor > len(req.ShuffleRequest.Targets) {
-			endCursor = len(req.ShuffleRequest.Targets)
+		// Exit after the number of attempts is exceeded.
+		if req.Times != 0 && req.Times < times {
+			return nil
 		}
-		tmp := shuffledTargets[i:endCursor]
-		slicedTargets = append(slicedTargets, &grpshuffle.Combination{Targets: tmp})
-		loopCount += 1
-	}
 
-	return &grpshuffle.ShuffleResponse{
-		Combinations: slicedTargets,
-	}, nil
+		result, err := Shuffle(req.ShuffleRequest)
+		if err != nil {
+			return err
+		}
+		if err := stream.Send(result); err != nil {
+			return err
+		}
+
+		times += 1
+	}
 }
