@@ -22,6 +22,15 @@ message ShuffleResponse {
   repeated Combination combinations= 1;  // Set of targets.
 }
 
+message RepeatShuffleRequest {
+  ShuffleRequest shuffleRequest = 1;  // Shuffle setting
+
+  uint64 interval = 2;  // The number of seconds to interval.
+
+  uint64 times = 3;  // The number of times repeated. If 0 is specified, it is unlimited.
+}
+
 service Compute {
   rpc Shuffle(ShuffleRequest) returns (ShuffleResponse);  // Shuffle.
+  rpc RepeatShuffle(RepeatShuffleRequest) returns (stream ShuffleResponse);  // Repeatable shuffling.
 }

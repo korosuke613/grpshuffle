@@ -183,6 +183,10 @@
                 </li>
               
                 <li>
+                  <a href="#grpshuffle.RepeatShuffleRequest"><span class="badge">M</span>RepeatShuffleRequest</a>
+                </li>
+              
+                <li>
                   <a href="#grpshuffle.ShuffleRequest"><span class="badge">M</span>ShuffleRequest</a>
                 </li>
               
@@ -227,6 +231,44 @@
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
                   <td><p>Target to be shuffled. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="grpshuffle.RepeatShuffleRequest">RepeatShuffleRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>shuffleRequest</td>
+                  <td><a href="#grpshuffle.ShuffleRequest">ShuffleRequest</a></td>
+                  <td></td>
+                  <td><p>Shuffle setting </p></td>
+                </tr>
+              
+                <tr>
+                  <td>interval</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>The number of seconds to interval. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>times</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>The number of times repeated. If 0 is specified, it is unlimited. </p></td>
                 </tr>
               
             </tbody>
@@ -317,6 +359,13 @@
                 <td><a href="#grpshuffle.ShuffleRequest">ShuffleRequest</a></td>
                 <td><a href="#grpshuffle.ShuffleResponse">ShuffleResponse</a></td>
                 <td><p>Shuffle.</p></td>
+              </tr>
+            
+              <tr>
+                <td>RepeatShuffle</td>
+                <td><a href="#grpshuffle.RepeatShuffleRequest">RepeatShuffleRequest</a></td>
+                <td><a href="#grpshuffle.ShuffleResponse">ShuffleResponse</a> stream</td>
+                <td><p>Repeatable shuffling.</p></td>
               </tr>
             
           </tbody>
