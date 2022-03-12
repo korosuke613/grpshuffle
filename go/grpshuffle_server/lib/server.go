@@ -26,14 +26,6 @@ func (s *Server) RepeatShuffle(req *grpshuffle.RepeatShuffleRequest, stream grps
 	times := uint64(0)
 
 	for {
-		select {
-		// Exit when the client cancels the request.
-		case <-stream.Context().Done():
-			return nil
-		// Wait for `req.Interval` second
-		case <-time.After(time.Duration(req.Interval) * time.Second):
-		}
-
 		// Exit after the number of attempts is exceeded.
 		if req.Times != 0 && req.Times < times {
 			return nil
@@ -45,6 +37,14 @@ func (s *Server) RepeatShuffle(req *grpshuffle.RepeatShuffleRequest, stream grps
 		}
 		if err := stream.Send(result); err != nil {
 			return err
+		}
+
+		select {
+		// Exit when the client cancels the request.
+		case <-stream.Context().Done():
+			return nil
+		// Wait for `req.Interval` second
+		case <-time.After(time.Duration(req.Interval) * time.Second):
 		}
 
 		times += 1
