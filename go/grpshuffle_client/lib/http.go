@@ -135,7 +135,8 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 						targetsString = fmt.Sprintf("%v, %v", targetsString, target)
 					}
 				}
-				prettyResponse = fmt.Sprintf("%v%v %v: %v\n", prettyResponse, groupName, i, targetsString)
+				groupNumber := i + 1 // It is for humans, so start at 1.
+				prettyResponse = fmt.Sprintf("%v%v %v: %v\n", prettyResponse, groupName, groupNumber, targetsString)
 			}
 			res = []byte(prettyResponse)
 		}
