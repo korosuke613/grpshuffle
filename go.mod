@@ -8,7 +8,7 @@ require (
 	github.com/prometheus/client_golang v1.12.2
 	github.com/urfave/cli/v2 v2.8.1
 	go.uber.org/zap v1.21.0
-	google.golang.org/grpc v1.46.2
+	google.golang.org/grpc v1.47.0
 	google.golang.org/protobuf v1.28.0
 )
 
