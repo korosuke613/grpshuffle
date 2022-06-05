@@ -63,57 +63,57 @@
       }
 
       td p:nth-child(1) {
-        text-indent: 0;
+        text-indent: 0;  
       }
 
-
-      .field-table td:nth-child(1) {
+       
+      .field-table td:nth-child(1) {  
         width: 10em;
       }
-      .field-table td:nth-child(2) {
+      .field-table td:nth-child(2) {  
         width: 10em;
       }
-      .field-table td:nth-child(3) {
+      .field-table td:nth-child(3) {  
         width: 6em;
       }
-      .field-table td:nth-child(4) {
+      .field-table td:nth-child(4) {  
         width: auto;
       }
 
-
-      .extension-table td:nth-child(1) {
+       
+      .extension-table td:nth-child(1) {  
         width: 10em;
       }
-      .extension-table td:nth-child(2) {
+      .extension-table td:nth-child(2) {  
         width: 10em;
       }
-      .extension-table td:nth-child(3) {
+      .extension-table td:nth-child(3) {  
         width: 10em;
       }
-      .extension-table td:nth-child(4) {
+      .extension-table td:nth-child(4) {  
         width: 5em;
       }
-      .extension-table td:nth-child(5) {
+      .extension-table td:nth-child(5) {  
         width: auto;
       }
 
-
-      .enum-table td:nth-child(1) {
+       
+      .enum-table td:nth-child(1) {  
         width: 10em;
       }
-      .enum-table td:nth-child(2) {
+      .enum-table td:nth-child(2) {  
         width: 10em;
       }
-      .enum-table td:nth-child(3) {
+      .enum-table td:nth-child(3) {  
         width: auto;
       }
 
-
+       
       .scalar-value-types-table tr {
         height: 3em;
       }
 
-
+       
       #toc-container ul {
         list-style-type: none;
         padding-left: 1em;
@@ -124,7 +124,7 @@
         font-weight: bold;
       }
 
-
+       
       .file-heading {
         width: 100%;
         display: table;
@@ -140,7 +140,7 @@
         display: table-cell;
       }
 
-
+       
       .badge {
         width: 1.6em;
         height: 1.6em;
@@ -160,7 +160,7 @@
       }
     </style>
 
-
+    
     <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
   </head>
 
@@ -172,180 +172,180 @@
 
     <div id="toc-container">
       <ul id="toc">
-
-
+        
+          
           <li>
             <a href="#grpshuffle.proto">grpshuffle.proto</a>
             <ul>
-
+              
                 <li>
                   <a href="#grpshuffle.Combination"><span class="badge">M</span>Combination</a>
                 </li>
-
+              
                 <li>
                   <a href="#grpshuffle.RepeatShuffleRequest"><span class="badge">M</span>RepeatShuffleRequest</a>
                 </li>
-
+              
                 <li>
                   <a href="#grpshuffle.ShuffleRequest"><span class="badge">M</span>ShuffleRequest</a>
                 </li>
-
+              
                 <li>
                   <a href="#grpshuffle.ShuffleResponse"><span class="badge">M</span>ShuffleResponse</a>
                 </li>
-
-
-
-
+              
+              
+              
+              
                 <li>
                   <a href="#grpshuffle.Compute"><span class="badge">S</span>Compute</a>
                 </li>
-
+              
             </ul>
           </li>
-
+        
         <li><a href="#scalar-value-types">Scalar Value Types</a></li>
       </ul>
     </div>
 
-
-
+    
+      
       <div class="file-heading">
         <h2 id="grpshuffle.proto">grpshuffle.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
 
-
+      
         <h3 id="grpshuffle.Combination">Combination</h3>
         <p></p>
 
-
+        
           <table class="field-table">
             <thead>
               <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
             </thead>
             <tbody>
-
+              
                 <tr>
                   <td>targets</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
                   <td><p>Target to be shuffled. </p></td>
                 </tr>
-
+              
             </tbody>
           </table>
 
+          
 
-
-
-
+        
+      
         <h3 id="grpshuffle.RepeatShuffleRequest">RepeatShuffleRequest</h3>
         <p></p>
 
-
+        
           <table class="field-table">
             <thead>
               <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
             </thead>
             <tbody>
-
+              
                 <tr>
                   <td>shuffleRequest</td>
                   <td><a href="#grpshuffle.ShuffleRequest">ShuffleRequest</a></td>
                   <td></td>
                   <td><p>Shuffle setting </p></td>
                 </tr>
-
+              
                 <tr>
                   <td>interval</td>
                   <td><a href="#uint64">uint64</a></td>
                   <td></td>
                   <td><p>The number of seconds to interval. </p></td>
                 </tr>
-
+              
                 <tr>
-                  <td>count</td>
+                  <td>times</td>
                   <td><a href="#uint64">uint64</a></td>
                   <td></td>
-                  <td><p>The number of count repeated. If 0 is specified, it is unlimited. </p></td>
+                  <td><p>The number of times repeated. If 0 is specified, it is unlimited. </p></td>
                 </tr>
-
+              
             </tbody>
           </table>
 
+          
 
-
-
-
+        
+      
         <h3 id="grpshuffle.ShuffleRequest">ShuffleRequest</h3>
         <p></p>
 
-
+        
           <table class="field-table">
             <thead>
               <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
             </thead>
             <tbody>
-
+              
                 <tr>
                   <td>targets</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
                   <td><p>Target to be shuffled. </p></td>
                 </tr>
-
+              
                 <tr>
                   <td>divide</td>
                   <td><a href="#uint64">uint64</a></td>
                   <td></td>
                   <td><p>The number of groups to divide into. </p></td>
                 </tr>
-
+              
                 <tr>
                   <td>sequential</td>
                   <td><a href="#bool">bool</a></td>
                   <td></td>
                   <td><p>If true, do not shuffle. </p></td>
                 </tr>
-
+              
             </tbody>
           </table>
 
+          
 
-
-
-
+        
+      
         <h3 id="grpshuffle.ShuffleResponse">ShuffleResponse</h3>
         <p></p>
 
-
+        
           <table class="field-table">
             <thead>
               <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
             </thead>
             <tbody>
-
+              
                 <tr>
                   <td>combinations</td>
                   <td><a href="#grpshuffle.Combination">Combination</a></td>
                   <td>repeated</td>
                   <td><p>Set of targets. </p></td>
                 </tr>
-
+              
             </tbody>
           </table>
 
+          
 
+        
+      
 
+      
 
+      
 
-
-
-
-
-
-
+      
         <h3 id="grpshuffle.Compute">Compute</h3>
         <p></p>
         <table class="enum-table">
@@ -353,26 +353,26 @@
             <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
           </thead>
           <tbody>
-
+            
               <tr>
                 <td>Shuffle</td>
                 <td><a href="#grpshuffle.ShuffleRequest">ShuffleRequest</a></td>
                 <td><a href="#grpshuffle.ShuffleResponse">ShuffleResponse</a></td>
                 <td><p>Shuffle.</p></td>
               </tr>
-
+            
               <tr>
                 <td>RepeatShuffle</td>
                 <td><a href="#grpshuffle.RepeatShuffleRequest">RepeatShuffleRequest</a></td>
                 <td><a href="#grpshuffle.ShuffleResponse">ShuffleResponse</a> stream</td>
                 <td><p>Repeatable shuffling.</p></td>
               </tr>
-
+            
           </tbody>
         </table>
 
-
-
+        
+    
 
     <h2 id="scalar-value-types">Scalar Value Types</h2>
     <table class="scalar-value-types-table">
@@ -380,7 +380,7 @@
         <tr><td>.proto Type</td><td>Notes</td><td>C++</td><td>Java</td><td>Python</td><td>Go</td><td>C#</td><td>PHP</td><td>Ruby</td></tr>
       </thead>
       <tbody>
-
+        
           <tr id="double">
             <td>double</td>
             <td></td>
@@ -392,7 +392,7 @@
             <td>float</td>
             <td>Float</td>
           </tr>
-
+        
           <tr id="float">
             <td>float</td>
             <td></td>
@@ -404,7 +404,7 @@
             <td>float</td>
             <td>Float</td>
           </tr>
-
+        
           <tr id="int32">
             <td>int32</td>
             <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
@@ -416,7 +416,7 @@
             <td>integer</td>
             <td>Bignum or Fixnum (as required)</td>
           </tr>
-
+        
           <tr id="int64">
             <td>int64</td>
             <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
@@ -428,7 +428,7 @@
             <td>integer/string</td>
             <td>Bignum</td>
           </tr>
-
+        
           <tr id="uint32">
             <td>uint32</td>
             <td>Uses variable-length encoding.</td>
@@ -440,7 +440,7 @@
             <td>integer</td>
             <td>Bignum or Fixnum (as required)</td>
           </tr>
-
+        
           <tr id="uint64">
             <td>uint64</td>
             <td>Uses variable-length encoding.</td>
@@ -452,7 +452,7 @@
             <td>integer/string</td>
             <td>Bignum or Fixnum (as required)</td>
           </tr>
-
+        
           <tr id="sint32">
             <td>sint32</td>
             <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
@@ -464,7 +464,7 @@
             <td>integer</td>
             <td>Bignum or Fixnum (as required)</td>
           </tr>
-
+        
           <tr id="sint64">
             <td>sint64</td>
             <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
@@ -476,7 +476,7 @@
             <td>integer/string</td>
             <td>Bignum</td>
           </tr>
-
+        
           <tr id="fixed32">
             <td>fixed32</td>
             <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
@@ -488,7 +488,7 @@
             <td>integer</td>
             <td>Bignum or Fixnum (as required)</td>
           </tr>
-
+        
           <tr id="fixed64">
             <td>fixed64</td>
             <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
@@ -500,7 +500,7 @@
             <td>integer/string</td>
             <td>Bignum</td>
           </tr>
-
+        
           <tr id="sfixed32">
             <td>sfixed32</td>
             <td>Always four bytes.</td>
@@ -512,7 +512,7 @@
             <td>integer</td>
             <td>Bignum or Fixnum (as required)</td>
           </tr>
-
+        
           <tr id="sfixed64">
             <td>sfixed64</td>
             <td>Always eight bytes.</td>
@@ -524,7 +524,7 @@
             <td>integer/string</td>
             <td>Bignum</td>
           </tr>
-
+        
           <tr id="bool">
             <td>bool</td>
             <td></td>
@@ -536,7 +536,7 @@
             <td>boolean</td>
             <td>TrueClass/FalseClass</td>
           </tr>
-
+        
           <tr id="string">
             <td>string</td>
             <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
@@ -548,7 +548,7 @@
             <td>string</td>
             <td>String (UTF-8)</td>
           </tr>
-
+        
           <tr id="bytes">
             <td>bytes</td>
             <td>May contain any arbitrary sequence of bytes.</td>
@@ -560,8 +560,9 @@
             <td>string</td>
             <td>String (ASCII-8BIT)</td>
           </tr>
-
+        
       </tbody>
     </table>
   </body>
 </html>
+
