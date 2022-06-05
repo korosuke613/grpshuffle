@@ -231,12 +231,16 @@ func repeatShuffleHandler(writer http.ResponseWriter, request *http.Request) {
 		}
 
 		res := makeResponse(options.ResponseFormat, resp.Combinations, options.GroupName)
-		log.Print(res)
 
+		writer.WriteHeader(http.StatusOK)
 		_, err = writer.Write(res)
 		if err != nil {
 			log.Print(err)
 			return
+		}
+
+		if f, ok := writer.(http.Flusher); ok {
+			f.Flush()
 		}
 
 		count += 1
