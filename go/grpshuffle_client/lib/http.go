@@ -1,14 +1,10 @@
 package grpshuffle_client
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/korosuke613/grpshuffle/go/grpshuffle"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/health/grpc_health_v1"
-	"google.golang.org/grpc/status"
-	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -47,7 +43,6 @@ func HttpServe(port int) {
 	addr := fmt.Sprintf(":%v", port)
 
 	http.HandleFunc("/shuffle", shuffleHandler)
-	http.HandleFunc("/repeat_shuffle", repeatShuffleHandler)
 	http.HandleFunc("/", healthHandler)
 
 	log.Printf("Launch grpshuffle-client http server %v...", port)
@@ -181,70 +176,6 @@ func getOptionsFromFormValue(request *http.Request) (*shuffleOptions, error) {
 		repeatInterval,
 		repeatTimes,
 	}, nil
-}
-
-// WIP
-func repeatShuffleHandler(writer http.ResponseWriter, request *http.Request) {
-	conn, err := Connect(Host, Port, NoTLS)
-	if err != nil {
-		newErrorResponse(writer, 500, "Internal Server Error")
-		return
-	}
-	defer CloseConnect(conn)
-
-	options, err := getOptionsFromFormValue(request)
-	if err != nil {
-		newErrorResponse(writer, 400, err.Error())
-		log.Print(err)
-		return
-	}
-
-	cc := grpshuffle.NewComputeClient(conn)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	repeatShuffleStream, err := RepeatShuffle(ctx, &cc, uint64(options.RepeatTimes), uint64(options.RepeatInterval), uint64(options.Divide), options.Targets)
-	if err != nil {
-		newErrorResponse(writer, 504, "Gateway Timeout")
-		log.Print(err)
-		return
-	}
-
-	count := uint64(0)
-	for {
-		if options.RepeatTimes != 0 && uint64(options.RepeatTimes) < count {
-			return
-		}
-
-		resp, err := repeatShuffleStream.Recv()
-
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-
-			if status.Code(err) == codes.Canceled {
-				break
-			}
-			log.Print(fmt.Errorf("receiving response: %w", err))
-			return
-		}
-
-		res := makeResponse(options.ResponseFormat, resp.Combinations, options.GroupName)
-
-		writer.WriteHeader(http.StatusOK)
-		_, err = writer.Write(res)
-		if err != nil {
-			log.Print(err)
-			return
-		}
-
-		if f, ok := writer.(http.Flusher); ok {
-			f.Flush()
-		}
-
-		count += 1
-	}
 }
 
 func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
