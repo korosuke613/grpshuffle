@@ -28,11 +28,6 @@
       "matchManagers": ["github-actions"],
       "groupName": "github-actions",
       "automerge": true,
-    },
-    {
-      "matchManagers": ["npm"],
-      "groupName": "npm",
-      "automerge": true,
     }
   ]
 }
