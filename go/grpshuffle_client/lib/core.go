@@ -61,7 +61,6 @@ func CloseConnect(conn *grpc.ClientConn) {
 
 // Shuffle is request to grpshuffle.ComputeClient
 func Shuffle(cc *grpshuffle.ComputeClient, divide uint64, targets []string) ([]*grpshuffle.Combination, error) {
-
 	ctx, cancel := context.WithCancel(context.Background())
 	go func(cancel func()) {
 		time.Sleep(2500 * time.Millisecond)
@@ -77,6 +76,24 @@ func Shuffle(cc *grpshuffle.ComputeClient, divide uint64, targets []string) ([]*
 	}
 
 	return res.Combinations, nil
+}
+
+// RepeatShuffle is request to grpchuffle.ComputeClient
+func RepeatShuffle(ctx context.Context, cc *grpshuffle.ComputeClient, times uint64, interval uint64, divide uint64, targets []string) (grpshuffle.Compute_RepeatShuffleClient, error) {
+	stream, err := (*cc).RepeatShuffle(ctx,
+		&grpshuffle.RepeatShuffleRequest{
+			ShuffleRequest: &grpshuffle.ShuffleRequest{
+				Targets: targets,
+				Divide:  divide,
+			},
+			Interval: interval,
+			Times:    times,
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	return stream, nil
 }
 
 // HealthCheckResponse is response HealthCheck

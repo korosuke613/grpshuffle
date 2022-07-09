@@ -5,6 +5,7 @@
 
 - [grpshuffle.proto](#grpshuffle.proto)
     - [Combination](#grpshuffle.Combination)
+    - [RepeatShuffleRequest](#grpshuffle.RepeatShuffleRequest)
     - [ShuffleRequest](#grpshuffle.ShuffleRequest)
     - [ShuffleResponse](#grpshuffle.ShuffleResponse)
   
@@ -30,6 +31,23 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | targets | [string](#string) | repeated | Target to be shuffled. |
+
+
+
+
+
+
+<a name="grpshuffle.RepeatShuffleRequest"></a>
+
+### RepeatShuffleRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| shuffleRequest | [ShuffleRequest](#grpshuffle.ShuffleRequest) |  | Shuffle setting |
+| interval | [uint64](#uint64) |  | The number of seconds to interval. |
+| times | [uint64](#uint64) |  | The number of times repeated. If 0 is specified, it is unlimited. |
 
 
 
@@ -82,6 +100,7 @@
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | Shuffle | [ShuffleRequest](#grpshuffle.ShuffleRequest) | [ShuffleResponse](#grpshuffle.ShuffleResponse) | Shuffle. |
+| RepeatShuffle | [RepeatShuffleRequest](#grpshuffle.RepeatShuffleRequest) | [ShuffleResponse](#grpshuffle.ShuffleResponse) stream | Repeatable shuffling. |
 
  
 
