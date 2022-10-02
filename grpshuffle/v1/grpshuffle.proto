@@ -1,5 +1,5 @@
 syntax = "proto3";
-package grpshuffle;
+package grpshuffle.v1;
 option go_package = "github.com/korosuke613/grpshuffle/go/grpshuffle";
 
 message Combination {
