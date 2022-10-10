@@ -25,7 +25,7 @@
     },
     {
       fileMatch: ["^.github/workflows/ci.yaml$"],
-      matchStrings: ["GOLANGCILINT_VERSION: v(?<currentValue>\\d+\\.\\d+)"],
+      matchStrings: ["GOLANGCILINT_VERSION: v(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
       datasourceTemplate: "github-releases",
       depNameTemplate: "golangci/golangci-lint",
     }
@@ -33,32 +33,35 @@
 
   "packageRules": [
     {
-      "matchManagers": ["gomod"],
       "groupName": "go",
       "automerge": true,
+      "matchManagers": ["gomod"],
       "postUpdateOptions": [
         "gomodTidy"
       ]
     },
     {
       groupName: "golang-version",
+      automerge: true,
       matchManagers: ["regex"],
       matchPackageNames: ["golang-version"],
     },
     {
       groupName: "golang-version",
+      automerge: true,
       matchManagers: ["gomod"],
       matchPackageNames: ["golang-version"],
     },
     {
       groupName: "golangci-lint",
+      automerge: true,
       matchManagers: ["regex"],
       matchPackageNames: ["golangci/golangci-lint"]
     },
     {
-      "matchManagers": ["github-actions"],
-      "groupName": "github-actions",
-      "automerge": true,
+      matchManagers: ["github-actions"],
+      groupName: "github-actions",
+      automerge: true,
     }
   ]
 }
