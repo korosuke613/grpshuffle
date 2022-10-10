@@ -1,6 +1,6 @@
 syntax = "proto3";
-package grpshuffle;
-option go_package = "github.com/korosuke613/grpshuffle/go/grpshuffle";
+package korosuke613.grpshuffle.v1;
+option go_package = ".";
 
 message Combination {
   repeated string targets = 1;  // Target to be shuffled.
@@ -22,6 +22,6 @@ message ShuffleResponse {
   repeated Combination combinations= 1;  // Set of targets.
 }
 
-service Compute {
+service ComputeService {
   rpc Shuffle(ShuffleRequest) returns (ShuffleResponse);  // Shuffle.
 }

@@ -2,97 +2,53 @@ package main
 
 import (
 	"fmt"
-	"google.golang.org/grpc/reflection"
-	"log"
-	"net"
-	"net/http"
-	"os"
-	"time"
-
-	"github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
-	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/korosuke613/grpshuffle/go/grpshuffle"
+	grpchealth "github.com/bufbuild/connect-grpchealth-go"
+	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
+	"github.com/korosuke613/grpshuffle/gen/korosuke613/grpshuffle/v1/grpshufflev1connect"
 	grpshuffleServer "github.com/korosuke613/grpshuffle/go/grpshuffle_server/lib"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
-	health "google.golang.org/grpc/health/grpc_health_v1"
-	"google.golang.org/grpc/keepalive"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
+	"log"
+	"net/http"
+	"os"
 )
-
-func extractFields(fullMethod string, req interface{}) map[string]interface{} {
-	ret := make(map[string]interface{})
-
-	switch args := req.(type) {
-	case *grpshuffle.ShuffleRequest:
-		ret["Divide"] = args.Divide
-		ret["Targets"] = args.Targets
-	default:
-		return nil
-	}
-
-	return ret
-}
 
 func main() {
 	app := &cli.App{
 		Name:  "grpshuffle-server",
 		Usage: "Server of groshuffle",
 		Action: func(c *cli.Context) error {
-			kep := keepalive.EnforcementPolicy{
-				MinTime: 60 * time.Second,
-			}
-
+			mux := http.NewServeMux()
 			logger, _ := zap.NewProduction()
-			serv := grpc.NewServer(
-				grpc.KeepaliveEnforcementPolicy(kep),
-				grpc.StreamInterceptor(
-					grpc_middleware.ChainStreamServer(
-						grpc_ctxtags.StreamServerInterceptor(grpc_ctxtags.WithFieldExtractor(extractFields)),
-						grpc_zap.StreamServerInterceptor(logger),
-						grpc_prometheus.StreamServerInterceptor,
-					),
-				),
-				grpc.UnaryInterceptor(
-					grpc_middleware.ChainUnaryServer(
-						grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(extractFields)),
-						grpc_zap.UnaryServerInterceptor(logger),
-						grpc_prometheus.UnaryServerInterceptor,
-					),
-				),
+			suger := logger.Sugar()
+
+			path, handler := grpshufflev1connect.NewComputeServiceHandler(
+				&grpshuffleServer.Server{Logger: suger},
 			)
+			mux.Handle(path, handler)
 
-			grpshuffle.RegisterComputeServer(serv, &grpshuffleServer.Server{})
-			health.RegisterHealthServer(serv, &grpshuffleServer.HealthServer{})
-			grpc_prometheus.Register(serv)
+			checker := grpchealth.NewStaticChecker(
+				grpshufflev1connect.ComputeServiceName,
+			)
+			mux.Handle(grpchealth.NewHandler(checker))
 
-			// Register Server Reflection
-			// https://github.com/grpc/grpc-go/blob/91967153f567adc812d8da223ef984d02a3664ed/Documentation/server-reflection-tutorial.md
-			reflection.Register(serv)
+			reflector := grpcreflect.NewStaticReflector(
+				grpshufflev1connect.ComputeServiceName,
+				"grpc.health.v1.Health",
+			)
+			mux.Handle(grpcreflect.NewHandlerV1(reflector))
+			mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
 
-			if grpshuffleServer.PrometheusEnable {
-				http.Handle("/metrics", promhttp.Handler())
-				prometheusAddr := fmt.Sprintf(":%v", grpshuffleServer.PrometheusPort)
-				go func() {
-					log.Printf("Launch Prometheus server %v...", grpshuffleServer.PrometheusPort)
-					if err := http.ListenAndServe(prometheusAddr, nil); err != nil {
-						panic(err)
-					}
-				}()
-			}
-
-			log.Printf("Launch grpshuffle server %v...", grpshuffleServer.Port)
-			l, err := net.Listen("tcp", fmt.Sprintf(":%d", grpshuffleServer.Port))
+			addr := fmt.Sprintf(":%d", grpshuffleServer.Port)
+			log.Printf("Launch grpshuffle server %v...", addr)
+			err := http.ListenAndServe(
+				addr,
+				h2c.NewHandler(mux, &http2.Server{}),
+			)
 			if err != nil {
-				return fmt.Errorf("failed to listen:%v", err)
-			}
-
-			err = serv.Serve(l)
-			if err != nil {
-				return fmt.Errorf("failed to serve:%v", err)
+				return err
 			}
 
 			return nil
