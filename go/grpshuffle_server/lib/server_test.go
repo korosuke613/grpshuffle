@@ -2,20 +2,19 @@ package grpshuffle_server_test
 
 import (
 	"context"
+	"github.com/bufbuild/connect-go"
 	grpshuffleServer "github.com/korosuke613/grpshuffle/go/grpshuffle_server/lib"
 	"reflect"
 	"testing"
 
-	"github.com/korosuke613/grpshuffle/go/grpshuffle"
+	grpshuffle "github.com/korosuke613/grpshuffle/gen/korosuke613/grpshuffle/v1"
 )
 
 func TestServer_Shuffle(t *testing.T) {
-	type fields struct {
-		UnimplementedComputeServer grpshuffle.UnimplementedComputeServer
-	}
+	type fields struct{}
 	type args struct {
 		ctx context.Context
-		req *grpshuffle.ShuffleRequest
+		req *connect.Request[grpshuffle.ShuffleRequest]
 	}
 	tests := []struct {
 		name    string
@@ -26,13 +25,15 @@ func TestServer_Shuffle(t *testing.T) {
 	}{
 		{
 			name:   "There are no omissions in the items that come back.",
-			fields: fields{UnimplementedComputeServer: grpshuffle.UnimplementedComputeServer{}},
+			fields: fields{},
 			args: args{
 				ctx: context.Background(),
-				req: &grpshuffle.ShuffleRequest{
-					Targets:    []string{"a", "b", "c", "d", "e"},
-					Divide:     1,
-					Sequential: true,
+				req: &connect.Request[grpshuffle.ShuffleRequest]{
+					Msg: &grpshuffle.ShuffleRequest{
+						Targets:    []string{"a", "b", "c", "d", "e"},
+						Divide:     1,
+						Sequential: true,
+					},
 				},
 			},
 			want: &grpshuffle.ShuffleResponse{
@@ -43,13 +44,15 @@ func TestServer_Shuffle(t *testing.T) {
 		},
 		{
 			name:   "Split into two.",
-			fields: fields{UnimplementedComputeServer: grpshuffle.UnimplementedComputeServer{}},
+			fields: fields{},
 			args: args{
 				ctx: context.Background(),
-				req: &grpshuffle.ShuffleRequest{
-					Targets:    []string{"a", "b", "c", "d", "e"},
-					Divide:     2,
-					Sequential: true,
+				req: &connect.Request[grpshuffle.ShuffleRequest]{
+					Msg: &grpshuffle.ShuffleRequest{
+						Targets:    []string{"a", "b", "c", "d", "e"},
+						Divide:     2,
+						Sequential: true,
+					},
 				},
 			},
 			want: &grpshuffle.ShuffleResponse{
@@ -61,13 +64,15 @@ func TestServer_Shuffle(t *testing.T) {
 		},
 		{
 			name:   "Split into three.",
-			fields: fields{UnimplementedComputeServer: grpshuffle.UnimplementedComputeServer{}},
+			fields: fields{},
 			args: args{
 				ctx: context.Background(),
-				req: &grpshuffle.ShuffleRequest{
-					Targets:    []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"},
-					Divide:     3,
-					Sequential: true,
+				req: &connect.Request[grpshuffle.ShuffleRequest]{
+					Msg: &grpshuffle.ShuffleRequest{
+						Targets:    []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"},
+						Divide:     3,
+						Sequential: true,
+					},
 				},
 			},
 			want: &grpshuffle.ShuffleResponse{
@@ -80,13 +85,15 @@ func TestServer_Shuffle(t *testing.T) {
 		},
 		{
 			name:   "Split into four.",
-			fields: fields{UnimplementedComputeServer: grpshuffle.UnimplementedComputeServer{}},
+			fields: fields{},
 			args: args{
 				ctx: context.Background(),
-				req: &grpshuffle.ShuffleRequest{
-					Targets:    []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"},
-					Divide:     4,
-					Sequential: true,
+				req: &connect.Request[grpshuffle.ShuffleRequest]{
+					Msg: &grpshuffle.ShuffleRequest{
+						Targets:    []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"},
+						Divide:     4,
+						Sequential: true,
+					},
 				},
 			},
 			want: &grpshuffle.ShuffleResponse{
@@ -101,16 +108,14 @@ func TestServer_Shuffle(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &grpshuffleServer.Server{
-				UnimplementedComputeServer: tt.fields.UnimplementedComputeServer,
-			}
+			s := &grpshuffleServer.Server{}
 			got, err := s.Shuffle(tt.args.ctx, tt.args.req)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Shuffle() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Shuffle() got = %v, want %v", got, tt.want)
+			if !reflect.DeepEqual(got.Msg, tt.want) {
+				t.Errorf("Shuffle() got = %v, want %v", got.Msg, tt.want)
 			}
 		})
 	}
