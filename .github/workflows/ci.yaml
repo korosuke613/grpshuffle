@@ -28,12 +28,15 @@ jobs:
   go-lint:
     name: Lint go
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
+        env:
+          GOLANGCILINT_VERSION: v1.29
         with:
-          version: v1.29
+          version: ${{ env.GOLANGCILINT_VERSION }}
 
   go-test:
     name: Test go
@@ -49,10 +52,11 @@ jobs:
   renovate-lint:
     name: Validate Renovate Config
     runs-on: ubuntu-latest
+    env:
+      RENOVATE_VERSION: 31.14
     steps:
       - uses: actions/checkout@v3
-      - run: docker pull docker.io/renovate/renovate:31.14
-      - run: docker run --rm --entrypoint "bash" -v "${PWD}":/work docker.io/renovate/renovate:31.14 -c 'cd /work && renovate-config-validator'
+      - run: docker run --rm --entrypoint "bash" -v "${PWD}":/work docker.io/renovate/renovate:${{ env.RENOVATE_VERSION }} -c 'cd /work && renovate-config-validator'
 
   action-lint:
     name: Lint GitHub Actions

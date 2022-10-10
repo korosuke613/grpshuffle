@@ -15,6 +15,22 @@
   "dependencyDashboardLabels": ["renovate"],
 
   "separateMajorMinor": false,
+
+  regexManagers: [
+    {
+      fileMatch: ["^.tool-versions$"],
+      matchStrings: ["golang (?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+      datasourceTemplate: "golang-version",
+      depNameTemplate: "golang-version"
+    },
+    {
+      fileMatch: ["^.github/workflows/ci.yaml$"],
+      matchStrings: ["GOLANGCILINT_VERSION: v(?<currentValue>\\d+\\.\\d+)"],
+      datasourceTemplate: "github-releases",
+      depNameTemplate: "golangci/golangci-lint",
+    }
+  ],
+
   "packageRules": [
     {
       "matchManagers": ["gomod"],
@@ -23,6 +39,21 @@
       "postUpdateOptions": [
         "gomodTidy"
       ]
+    },
+    {
+      groupName: "golang-version",
+      matchManagers: ["regex"],
+      matchPackageNames: ["golang-version"],
+    },
+    {
+      groupName: "golang-version",
+      matchManagers: ["gomod"],
+      matchPackageNames: ["golang-version"],
+    },
+    {
+      groupName: "golangci-lint",
+      matchManagers: ["regex"],
+      matchPackageNames: ["golangci/golangci-lint"]
     },
     {
       "matchManagers": ["github-actions"],
