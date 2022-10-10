@@ -18,12 +18,6 @@
 
   regexManagers: [
     {
-      fileMatch: ["^.tool-versions$"],
-      matchStrings: ["golang (?<currentValue>\\d+\\.\\d+\\.\\d+)"],
-      datasourceTemplate: "golang-version",
-      depNameTemplate: "golang-version"
-    },
-    {
       fileMatch: ["^.github/workflows/ci.yaml$"],
       matchStrings: ["GOLANGCILINT_VERSION: v(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
       datasourceTemplate: "github-releases",
@@ -39,18 +33,6 @@
       "postUpdateOptions": [
         "gomodTidy"
       ]
-    },
-    {
-      groupName: "golang-version",
-      automerge: true,
-      matchManagers: ["regex"],
-      matchPackageNames: ["golang-version"],
-    },
-    {
-      groupName: "golang-version",
-      automerge: true,
-      matchManagers: ["gomod"],
-      matchPackageNames: ["golang-version"],
     },
     {
       groupName: "golangci-lint",
