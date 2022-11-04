@@ -22,6 +22,7 @@
       matchStrings: ["GOLANGCILINT_VERSION: v(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
       datasourceTemplate: "github-releases",
       depNameTemplate: "golangci/golangci-lint",
+      extractVersionTemplate: "^v(?<version>.*)$",
     }
   ],
 
