@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ComputeClient interface {
 	Shuffle(ctx context.Context, in *ShuffleRequest, opts ...grpc.CallOption) (*ShuffleResponse, error)
+	RepeatShuffle(ctx context.Context, in *RepeatShuffleRequest, opts ...grpc.CallOption) (Compute_RepeatShuffleClient, error)
 }
 
 type computeClient struct {
@@ -38,11 +39,44 @@ func (c *computeClient) Shuffle(ctx context.Context, in *ShuffleRequest, opts ..
 	return out, nil
 }
 
+func (c *computeClient) RepeatShuffle(ctx context.Context, in *RepeatShuffleRequest, opts ...grpc.CallOption) (Compute_RepeatShuffleClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Compute_ServiceDesc.Streams[0], "/grpshuffle.Compute/RepeatShuffle", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &computeRepeatShuffleClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Compute_RepeatShuffleClient interface {
+	Recv() (*ShuffleResponse, error)
+	grpc.ClientStream
+}
+
+type computeRepeatShuffleClient struct {
+	grpc.ClientStream
+}
+
+func (x *computeRepeatShuffleClient) Recv() (*ShuffleResponse, error) {
+	m := new(ShuffleResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ComputeServer is the server API for Compute service.
 // All implementations must embed UnimplementedComputeServer
 // for forward compatibility
 type ComputeServer interface {
 	Shuffle(context.Context, *ShuffleRequest) (*ShuffleResponse, error)
+	RepeatShuffle(*RepeatShuffleRequest, Compute_RepeatShuffleServer) error
 	mustEmbedUnimplementedComputeServer()
 }
 
@@ -52,6 +86,9 @@ type UnimplementedComputeServer struct {
 
 func (UnimplementedComputeServer) Shuffle(context.Context, *ShuffleRequest) (*ShuffleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Shuffle not implemented")
+}
+func (UnimplementedComputeServer) RepeatShuffle(*RepeatShuffleRequest, Compute_RepeatShuffleServer) error {
+	return status.Errorf(codes.Unimplemented, "method RepeatShuffle not implemented")
 }
 func (UnimplementedComputeServer) mustEmbedUnimplementedComputeServer() {}
 
@@ -84,6 +121,27 @@ func _Compute_Shuffle_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Compute_RepeatShuffle_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(RepeatShuffleRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ComputeServer).RepeatShuffle(m, &computeRepeatShuffleServer{stream})
+}
+
+type Compute_RepeatShuffleServer interface {
+	Send(*ShuffleResponse) error
+	grpc.ServerStream
+}
+
+type computeRepeatShuffleServer struct {
+	grpc.ServerStream
+}
+
+func (x *computeRepeatShuffleServer) Send(m *ShuffleResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // Compute_ServiceDesc is the grpc.ServiceDesc for Compute service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -96,6 +154,12 @@ var Compute_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Compute_Shuffle_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "RepeatShuffle",
+			Handler:       _Compute_RepeatShuffle_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "grpshuffle.proto",
 }

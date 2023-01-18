@@ -22,9 +22,9 @@ type HttpResponse struct {
 type ResponseFormat string
 
 const (
-	FormatJson       = "json"
-	FormatJsonPretty = "json-pretty"
-	FormatReadable   = "readable"
+	FormatJson       ResponseFormat = "json"
+	FormatJsonPretty ResponseFormat = "json-pretty"
+	FormatReadable   ResponseFormat = "readable"
 )
 
 func (r *ResponseFormat) checkType() error {
@@ -49,54 +49,8 @@ func HttpServe(port int) {
 	log.Fatal(http.ListenAndServe(addr, logger(http.DefaultServeMux)))
 }
 
-func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
-	conn, err := Connect(Host, Port, NoTLS)
-	if err != nil {
-		newErrorResponse(writer, 500, "Internal Server Error")
-		return
-	}
-	defer CloseConnect(conn)
-
-	format := ResponseFormat(request.FormValue("fmt"))
-	if format != "" {
-		err = format.checkType()
-		if err != nil {
-			newErrorResponse(writer, 400, err.Error())
-			return
-		}
-	}
-
-	rawDivide := request.FormValue("divide")
-	if rawDivide == "" {
-		newErrorResponse(writer, 400, "divide parameter is required")
-		return
-	}
-	divide, err := strconv.Atoi(rawDivide)
-	if err != nil {
-		newErrorResponse(writer, 400, "divide parameter allows numbers")
-		return
-	}
-
-	groupName := request.FormValue("groupName")
-	if groupName == "" {
-		groupName = "Group"
-	}
-
-	rawTargets := request.FormValue("targets")
-	if rawTargets == "" {
-		newErrorResponse(writer, 400, "targets parameter is required")
-		return
-	}
-	targets := strings.Split(rawTargets, ",")
-	cc := grpshuffle.NewComputeClient(conn)
-	result, err := Shuffle(&cc, uint64(divide), targets)
-	if err != nil {
-		newErrorResponse(writer, 504, "Gateway Timeout")
-		log.Print(err)
-		return
-	}
-
-	var res []byte
+func makeResponse(format ResponseFormat, shuffleResult []*grpshuffle.Combination, groupName string) (res []byte) {
+	var err error
 
 	switch format {
 	case FormatJson:
@@ -104,7 +58,7 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 			res, err = json.Marshal(HttpResponse{
 				Status: 200,
 				Msg:    "Ok",
-				Result: result,
+				Result: shuffleResult,
 			})
 			if err != nil {
 				log.Print(err)
@@ -116,7 +70,7 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 			res, err = json.MarshalIndent(HttpResponse{
 				Status: 200,
 				Msg:    "Ok",
-				Result: result,
+				Result: shuffleResult,
 			}, "", "  ")
 			if err != nil {
 				log.Print(err)
@@ -126,7 +80,7 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 	case FormatReadable:
 		{
 			var prettyResponse string
-			for i, combination := range result {
+			for i, combination := range shuffleResult {
 				var targetsString string
 				for _, target := range combination.Targets {
 					if targetsString == "" {
@@ -145,7 +99,7 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 			res, err = json.Marshal(HttpResponse{
 				Status: 200,
 				Msg:    "Ok",
-				Result: result,
+				Result: shuffleResult,
 			})
 			if err != nil {
 				log.Print(err)
@@ -153,6 +107,101 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 			}
 		}
 	}
+
+	return res
+}
+
+type shuffleOptions struct {
+	ResponseFormat ResponseFormat
+	Divide         int
+	GroupName      string
+	Targets        []string
+	RepeatInterval int
+	RepeatTimes    int
+}
+
+func getOptionsFromFormValue(request *http.Request) (*shuffleOptions, error) {
+	format := ResponseFormat(request.FormValue("fmt"))
+	if format != "" {
+		err := format.checkType()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	rawDivide := request.FormValue("divide")
+	if rawDivide == "" {
+		return nil, fmt.Errorf("divide parameter is required")
+	}
+	divide, err := strconv.Atoi(rawDivide)
+	if err != nil {
+		return nil, fmt.Errorf("divide parameter allows numbers")
+	}
+
+	var repeatInterval int
+	rawRepeatInterval := request.FormValue("interval")
+	if rawRepeatInterval != "" {
+		repeatInterval, err = strconv.Atoi(rawRepeatInterval)
+		if err != nil {
+			return nil, fmt.Errorf("interval parameter allows numbers")
+		}
+	}
+
+	var repeatTimes int
+	rawRepeatTimes := request.FormValue("times")
+	if rawRepeatTimes != "" {
+		var err error
+		repeatTimes, err = strconv.Atoi(rawRepeatTimes)
+		if err != nil {
+			return nil, fmt.Errorf("times parameter allows numbers")
+		}
+	}
+
+	groupName := request.FormValue("groupName")
+	if groupName == "" {
+		groupName = "Group"
+	}
+
+	rawTargets := request.FormValue("targets")
+	if rawTargets == "" {
+		return nil, fmt.Errorf("targets parameter is required")
+	}
+	targets := strings.Split(rawTargets, ",")
+
+	return &shuffleOptions{
+		format,
+		divide,
+		groupName,
+		targets,
+		repeatInterval,
+		repeatTimes,
+	}, nil
+}
+
+func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
+	conn, err := Connect(Host, Port, NoTLS)
+	if err != nil {
+		newErrorResponse(writer, 500, "Internal Server Error")
+		return
+	}
+	defer CloseConnect(conn)
+
+	options, err := getOptionsFromFormValue(request)
+	if err != nil {
+		newErrorResponse(writer, 400, err.Error())
+		log.Print(err)
+		return
+	}
+
+	cc := grpshuffle.NewComputeClient(conn)
+	result, err := Shuffle(&cc, uint64(options.Divide), options.Targets)
+	if err != nil {
+		newErrorResponse(writer, 504, "Gateway Timeout")
+		log.Print(err)
+		return
+	}
+
+	var res = makeResponse(options.ResponseFormat, result, options.GroupName)
 
 	_, err = writer.Write(res)
 	if err != nil {
