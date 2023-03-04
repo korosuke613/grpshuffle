@@ -98,6 +98,37 @@ func TestServer_Shuffle(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:   "Not split.",
+			fields: fields{UnimplementedComputeServer: grpshuffle.UnimplementedComputeServer{}},
+			args: args{
+				ctx: context.Background(),
+				req: &grpshuffle.ShuffleRequest{
+					Targets:    []string{"a", "b", "c"},
+					Divide:     1,
+					Sequential: true,
+				},
+			},
+			want: &grpshuffle.ShuffleResponse{
+				Combinations: []*grpshuffle.Combination{
+					{Targets: []string{"a", "b", "c"}},
+				},
+			},
+		},
+		{
+			name:   "Throw error when divide 0.",
+			fields: fields{UnimplementedComputeServer: grpshuffle.UnimplementedComputeServer{}},
+			args: args{
+				ctx: context.Background(),
+				req: &grpshuffle.ShuffleRequest{
+					Targets:    []string{"a", "b", "c"},
+					Divide:     0,
+					Sequential: true,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
