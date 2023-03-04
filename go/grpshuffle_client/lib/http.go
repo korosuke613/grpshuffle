@@ -1,6 +1,7 @@
 package grpshuffle_client
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/korosuke613/grpshuffle/go/grpshuffle"
@@ -91,8 +92,7 @@ func shuffleHandler(writer http.ResponseWriter, request *http.Request) {
 	cc := grpshuffle.NewComputeClient(conn)
 	result, err := Shuffle(&cc, uint64(divide), targets)
 	if err != nil {
-		newErrorResponse(writer, 504, "Gateway Timeout")
-		log.Print(err)
+		newErrorResponse(writer, 500, fmt.Sprintf("[Internal Server Error] %s", err))
 		return
 	}
 
@@ -196,18 +196,24 @@ func healthHandler(writer http.ResponseWriter, _ *http.Request) {
 
 func newErrorResponse(writer http.ResponseWriter, statusCode int, msg string) {
 	writer.WriteHeader(statusCode)
-	res, err := json.Marshal(HttpResponse{
+
+	httpResponse := HttpResponse{
 		Status: statusCode,
 		Msg:    msg,
 		Result: nil,
-	})
+	}
+
+	res := new(bytes.Buffer)
+	encoder := json.NewEncoder(res)
+	encoder.SetEscapeHTML(false)
+	err := encoder.Encode(httpResponse)
 
 	if err != nil {
 		log.Print(err)
 		return
 	}
 
-	_, err = writer.Write(res)
+	_, err = writer.Write(res.Bytes())
 	if err != nil {
 		log.Print(err)
 		return
