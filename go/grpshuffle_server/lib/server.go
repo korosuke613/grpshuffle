@@ -37,6 +37,10 @@ func (s *Server) Shuffle(ctx context.Context, req *grpshuffle.ShuffleRequest) (*
 		return nil, status.Errorf(codes.InvalidArgument, "Must have `divide` >= `targets` num.")
 	}
 
+	if req.Divide == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "Must have `divide` > 0.")
+	}
+
 	// split targets by the number of divide.
 	slicedTargets := make([]*grpshuffle.Combination, 0)
 	average := int(uint64(len(req.Targets)) / req.Divide)
