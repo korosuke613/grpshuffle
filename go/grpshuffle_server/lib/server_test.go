@@ -99,6 +99,24 @@ func TestServer_Shuffle(t *testing.T) {
 			},
 		},
 		{
+			name:   "Split same targets.",
+			fields: fields{UnimplementedComputeServer: grpshuffle.UnimplementedComputeServer{}},
+			args: args{
+				ctx: context.Background(),
+				req: &grpshuffle.ShuffleRequest{
+					Targets:    []string{"a", "b"},
+					Divide:     2,
+					Sequential: true,
+				},
+			},
+			want: &grpshuffle.ShuffleResponse{
+				Combinations: []*grpshuffle.Combination{
+					{Targets: []string{"a"}},
+					{Targets: []string{"b"}},
+				},
+			},
+		},
+		{
 			name:   "Not split.",
 			fields: fields{UnimplementedComputeServer: grpshuffle.UnimplementedComputeServer{}},
 			args: args{
