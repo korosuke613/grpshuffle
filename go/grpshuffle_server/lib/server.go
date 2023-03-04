@@ -33,7 +33,7 @@ func (s *Server) Shuffle(ctx context.Context, req *grpshuffle.ShuffleRequest) (*
 		})
 	}
 
-	if req.Divide >= uint64(len(req.Targets)) {
+	if req.Divide > uint64(len(req.Targets)) {
 		return nil, status.Errorf(codes.InvalidArgument, "Must have `divide` >= `targets` num.")
 	}
 
