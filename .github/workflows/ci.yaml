@@ -34,7 +34,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         env:
-          GOLANGCILINT_VERSION: v1.59.0
+          GOLANGCILINT_VERSION: v1.59.1
         with:
           version: ${{ env.GOLANGCILINT_VERSION }}
 
