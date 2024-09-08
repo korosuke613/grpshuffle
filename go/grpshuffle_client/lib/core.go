@@ -42,7 +42,7 @@ func Connect(host string, port int, noTls bool) (conn *grpc.ClientConn, err erro
 
 	dialOpts := makeDialOpts(noTls)
 
-	conn, err = grpc.Dial(addr, dialOpts...)
+	conn, err = grpc.NewClient(addr, dialOpts...)
 	if err != nil {
 		return nil, err
 	}

@@ -2,10 +2,10 @@ package grpshuffle_server
 
 import (
 	"context"
+	"math/rand"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"math/rand"
-	"time"
 
 	"github.com/korosuke613/grpshuffle/go/grpshuffle"
 )
@@ -27,7 +27,6 @@ func (s *Server) Shuffle(ctx context.Context, req *grpshuffle.ShuffleRequest) (*
 
 	if !req.Sequential {
 		// randomly swap targets.
-		rand.Seed(time.Now().UnixNano())
 		rand.Shuffle(len(req.Targets), func(i, j int) {
 			shuffledTargets[i], shuffledTargets[j] = shuffledTargets[j], shuffledTargets[i]
 		})
