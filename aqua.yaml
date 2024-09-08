@@ -15,3 +15,4 @@ packages:
 - name: golang/go
   go_version_file: go.mod
 - name: jwilder/dockerize@v0.8.0
+- name: goreleaser/goreleaser@v2.2.0
