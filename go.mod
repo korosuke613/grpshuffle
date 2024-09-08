@@ -6,6 +6,7 @@ toolchain go1.23.1
 
 require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/prometheus/client_golang v1.20.3
 	github.com/urfave/cli/v2 v2.27.4
