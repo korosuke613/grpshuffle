@@ -36,7 +36,7 @@ jobs:
           diff -u <(echo -n) <(go fmt ./...)
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@aaa42aa0628b4ae2578232a66b541047968fac86 # v6
+        uses: golangci/golangci-lint-action@aaa42aa0628b4ae2578232a66b541047968fac86 # v6.1.0
         with:
           install-mode: none
 
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: reviewdog/action-actionlint@4f8f9963ca57a41e5fd5b538dd79dbfbd3e0b38a # v1
+      - uses: reviewdog/action-actionlint@4f8f9963ca57a41e5fd5b538dd79dbfbd3e0b38a # v1.54.0
 
   e2e-test:
     name: End-to-End testing
