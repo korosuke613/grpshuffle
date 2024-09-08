@@ -4,6 +4,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>korosuke613/renovate-config",
-    "github>aquaproj/aqua-renovate-config#2.2.1"
+    "github>aquaproj/aqua-renovate-config#2.3.1"
   ]
 }
