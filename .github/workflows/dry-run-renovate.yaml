@@ -1,0 +1,19 @@
+name: Renovate Dry Run
+
+on:
+  workflow_dispatch:
+
+jobs:
+  renovate-dry-run:
+    permissions:
+      contents: read  # required by actions/checkout
+      pull-requests: read  # required by renovate, because renovate to read pull request.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      - uses: cybozu/renovate-dry-run-action@v1
+        with:
+          config-file: renovate.json5
