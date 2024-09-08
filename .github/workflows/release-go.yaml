@@ -26,10 +26,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v5
+
+      - name: cache aqua
+        uses: actions/cache@v3.3.1
         with:
-          go-version-file: 'go.mod'
-          cache: true
+          path: ~/.local/share/aquaproj-aqua
+          key: v1-aqua-installer-${{runner.os}}-${{runner.arch}}-${{hashFiles('aqua.yaml')}}
+          restore-keys: |
+            v1-aqua-installer-${{runner.os}}-${{runner.arch}}-
+      - uses: aquaproj/aqua-installer@v3.0.1
+        with:
+          aqua_version: v2.28.0
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:

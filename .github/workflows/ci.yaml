@@ -14,40 +14,34 @@ permissions:
   statuses: none
 
 jobs:
-  go-fmt:
-    name: Check go format
+  go-check:
+    name: Check go
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+
+      - name: cache aqua
+        uses: actions/cache@v3.3.1
         with:
-          go-version-file: 'go.mod'
-          cache: true
-      - run: diff -u <(echo -n) <(go fmt ./...)
+          path: ~/.local/share/aquaproj-aqua
+          key: v1-aqua-installer-${{runner.os}}-${{runner.arch}}-${{hashFiles('aqua.yaml')}}
+          restore-keys: |
+            v1-aqua-installer-${{runner.os}}-${{runner.arch}}-
+      - uses: aquaproj/aqua-installer@v3.0.1
+        with:
+          aqua_version: v2.31.0
 
-  go-lint:
-    name: Lint go
-    runs-on: ubuntu-latest
+      - name: gofmt
+        run: |
+          diff -u <(echo -n) <(go fmt ./...)
 
-    steps:
-      - uses: actions/checkout@v4
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
-        env:
-          GOLANGCILINT_VERSION: v1.59.1
         with:
-          version: ${{ env.GOLANGCILINT_VERSION }}
+          install-mode: none
 
-  go-test:
-    name: Test go
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: 'go.mod'
-          cache: true
-      - run: go test ./... -v
+      - name: go test
+        run: go test ./... -v
 
   renovate-lint:
     name: Validate Renovate Config
@@ -68,17 +62,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+
+      - name: cache aqua
+        uses: actions/cache@v3.3.1
         with:
-          go-version-file: 'go.mod'
-          cache: true
-      - name: Install Dockerize
-        env:
-          DOCKERIZE_VERSION: v0.6.1
-        run: |
-          wget "https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz"
-          sudo tar -C /usr/local/bin -xzvf "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz"
-          rm "dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz"
+          path: ~/.local/share/aquaproj-aqua
+          key: v1-aqua-installer-${{runner.os}}-${{runner.arch}}-${{hashFiles('aqua.yaml')}}
+          restore-keys: |
+            v1-aqua-installer-${{runner.os}}-${{runner.arch}}-
+      - uses: aquaproj/aqua-installer@v3.0.1
+        with:
+          aqua_version: v2.31.0
 
       - run: make
 
