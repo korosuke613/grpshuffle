@@ -2,7 +2,7 @@ module github.com/korosuke613/grpshuffle
 
 go 1.21.13
 
-toolchain go1.23.1
+toolchain go1.23.4
 
 require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
