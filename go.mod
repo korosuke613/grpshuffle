@@ -9,7 +9,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/prometheus/client_golang v1.20.4
-	github.com/urfave/cli/v2 v2.27.4
+	github.com/urfave/cli/v2 v2.27.5
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.66.0
 	google.golang.org/protobuf v1.34.2
@@ -18,7 +18,7 @@ require (
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.5 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
