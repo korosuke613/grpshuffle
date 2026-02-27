@@ -14,5 +14,5 @@ packages:
 - name: golangci/golangci-lint@v1.61.0
 - name: golang/go
   go_version_file: go.mod
-- name: jwilder/dockerize@v0.8.0
+- name: jwilder/dockerize@v0.10.1
 - name: goreleaser/goreleaser@v2.2.0
